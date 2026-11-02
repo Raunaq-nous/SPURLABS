@@ -4,6 +4,11 @@
   const eng = new S.Engine($('#scene')); S.engine = eng;
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => eng.refreshGlyphs());
   const TOOL = Object.fromEntries(D.tools.map((t) => [t.id, t])), STG = D.stages, SI = Object.fromEntries(STG.map((s, i) => [s.id, i]));
+  /* auto-advance with progress bars; scrolling speeds it up */
+  const AUTO = {}; let sv = 0, lastSY = scrollY, lastAT = 0, hoverFlag = '';
+  const pauseAuto = (k) => { (AUTO[k] = AUTO[k] || { acc: 0, hold: 0 }).hold = 9; };
+  const stepAuto = (k, t, dur, n, cur, set, bar) => { const a = (AUTO[k] = AUTO[k] || { acc: 0, hold: 0 }); const dt = a.t == null ? 0 : Math.min(0.1, Math.max(0, t - a.t)); a.t = t; const boost = 1 + Math.min(7, sv / 5);
+    if (a.hold > 0) a.hold -= dt; else if (hoverFlag !== k) a.acc += dt * boost; if (a.acc >= dur) { a.acc = 0; set((cur + 1) % n); } const el = bar(); if (el) el.style.setProperty('--p', (a.acc / dur).toFixed(3)); };
   const tl = (id) => '<a href="#tool/' + id + '">' + TOOL[id].name + '</a>';
   const PHRASE = { dc: 'a data center', ccgt: 'a power plant', nuclear: 'a nuclear plant', wind: 'an offshore wind farm', solar: 'a solar and storage project', hvdc: 'a transmission project', lng: 'an LNG terminal', oil: 'an oil and gas field', fab: 'a semiconductor fab', mine: 'a mine', water: 'a water plant', hydro: 'a hydropower dam', bridge: 'a bridge or railway', tower: 'a supertall', manufacturing: 'a manufacturing plant', pharma: 'a pharma facility' };
   const IND_TOOLS = { dc: ['generative-concepts', 'cost-line', 'generative-twin', 'opportunity-map', 'cockpit'], ccgt: ['generative-concepts', 'cost-line', 'investment-case', 'outturn', 'asset-potential'], nuclear: ['outturn', 'risk-analysis', 'generative-twin', 'cockpit', 'forensic'], wind: ['opportunity-map', 'risk-analysis', 'generative-twin', 'cost-line'], solar: ['generative-concepts', 'cost-line', 'investment-case', 'asset-potential'], hvdc: ['generative-scheduling', 'risk-analysis', 'cockpit', 'opportunity-map'], lng: ['generative-concepts', 'cost-line', 'outturn', 'forensic'], oil: ['outturn', 'realityscan', 'generative-twin', 'risk-analysis'], fab: ['generative-twin', 'generative-scheduling', 'cost-line', 'cockpit'], mine: ['realityscan', 'generative-concepts', 'investment-case', 'risk-analysis'], water: ['realityscan', 'outturn', 'cost-line', 'generative-twin'], hydro: ['outturn', 'risk-analysis', 'forensic', 'cockpit'], bridge: ['outturn', 'cockpit', 'forensic', 'lessons-learned'], manufacturing: ['generative-scheduling', 'cost-line', 'generative-twin', 'stage-gate'], pharma: ['stage-gate', 'generative-twin', 'cost-line', 'lessons-learned'], tower: ['cost-line', 'generative-twin', 'generative-scheduling', 'cockpit'] };
@@ -58,7 +63,7 @@
       const base = hov ? 0 : 0.6; x += base + v; v *= 0.92; if (Math.abs(v) < 0.02) v = 0; x = ((x % w) + w) % w; tr.style.transform = 'translate3d(' + -x + 'px,0,0)'; })(); })();
   /* platform layers */
   let layerSel = 0, layerManual = false, layerAt = 0;
-  $('#layers').addEventListener('click', (e) => { const li = e.target.closest('[data-l]'); if (!li || e.target.closest('a')) return; layerManual = true; layerSel = +li.dataset.l; $$('#layers li').forEach((x, i) => x.classList.toggle('on', i === layerSel)); });
+  $('#layers').addEventListener('click', (e) => { const li = e.target.closest('[data-l]'); if (!li || e.target.closest('a')) return; pauseAuto('layer'); layerSel = +li.dataset.l; $$('#layers li').forEach((x, i) => x.classList.toggle('on', i === layerSel)); });
   $('#layers').innerHTML = D.layers.map((l, i) => '<li data-l="' + i + '" class="' + (i === 0 ? 'on' : '') + '" tabindex="0"><b>' + l.name + '</b><span>' + l.line + '</span><i>' + D.tools.filter((t) => t.layer === l.id).map((t) => tl(t.id)).join(', ') + '</i></li>').join('');
 
   /* lifecycle: the whole lifecycle at once, then a stage */
@@ -68,12 +73,16 @@
   $('#lc-sel').innerHTML = STG.map((st, i) => '<button type="button" role="tab" data-s="' + i + '" class="' + (st.id === 'fid' ? 'fid' : '') + '" aria-selected="' + (i === lcSel) + '"><i>' + (st.alias || st.phase) + '</i>' + String(i + 1).padStart(2, '0') + ' ' + st.name + '</button>').join('');
   const GATE = { opp: 'Gate 1: pursue or stop', con: 'Gate 2: concept select', sel: 'Gate 3: proceed to definition', def: 'Gate 4: ready for FID', fid: 'FID: commit the capital', pro: 'Contract award', exe: 'Mechanical completion', com: 'Handover to operations', ops: 'Annual performance review', eol: 'Extend, repower or retire' };
   function lcDetail() { const st = STG[lcSel], ts = D.tools.filter((t) => t.stages[st.id]); $$('#lc-sel button').forEach((b, i) => b.setAttribute('aria-selected', String(i === lcSel))); $('#lc-detail').innerHTML = '<div><p class="lc-num">' + st.phase + ' / ' + String(lcSel + 1).padStart(2, '0') + ' of 10</p><h3>' + (st.id === 'fid' ? 'FID, the final investment decision' : st.name) + '</h3><p class="q">' + st.q + '</p><p class="gate">Decision point: ' + GATE[st.id] + '</p><p style="margin-top:16px"><a class="lnk" href="#stage/' + st.id + '">Open the ' + st.name + ' page →</a></p></div><ul>' + ts.map((t) => '<li>' + tl(t.id) + '<span>' + t.stages[st.id] + '</span></li>').join('') + '</ul>'; }
-  $('#lc-sel').addEventListener('click', (e) => { const b = e.target.closest('[data-s]'); if (!b) return; lcSel = +b.dataset.s; lcDetail(); });
+  $('#lc-sel').addEventListener('click', (e) => { const b = e.target.closest('[data-s]'); if (!b) return; lcSel = +b.dataset.s; pauseAuto('life'); lcDetail(); });
   lcDetail();
+  [['#lc-sel,#lc-detail', 'life'], ['#ind-sel,#ind-now', 'ind'], ['#layers', 'layer']].forEach(([s, k]) => $$(s).forEach((el) => { el.addEventListener('mouseenter', () => (hoverFlag = k)); el.addEventListener('mouseleave', () => (hoverFlag = '')); }));
 
   /* industries */
   let indSel = 0;
-  let indAt = 0; const indNow = () => { const x = IND[indSel] || IND[0]; $('#ind-now').innerHTML = '<b>' + x.name + '</b><span>' + x.line + '</span><a href="#industry/' + x.id + '">Open →</a>'; }; indNow();
+  let indAt = 0;
+  $('#ind-sel').innerHTML = IND.map((x, i) => '<button type="button" role="tab" data-n="' + i + '" aria-selected="' + (i === 0) + '">' + x.name + '</button>').join('');
+  $('#ind-sel').addEventListener('click', (e) => { const b = e.target.closest('[data-n]'); if (!b) return; indSel = +b.dataset.n; pauseAuto('ind'); indNow(); });
+  const indNow = () => { $$('#ind-sel button').forEach((b, i) => b.setAttribute('aria-selected', String(i === indSel))); const x0 = IND[indSel] || IND[0]; $('#ind-now').innerHTML = '<b>' + x0.name + '</b><span>' + x0.line + '</span><a href="#industry/' + x0.id + '">Open →</a>'; }; indNow();
 
   /* customers */
   /* customers: one audience at a time, auto-advancing */
@@ -157,7 +166,7 @@
     if (view === 'other') { eng.set(null); clearCaps(); return; }
     if (view === 'industry' || view === 'stage' || view === 'customer') { const rc = rectOf($('#' + view + ' .vis')), key = location.hash.split('/')[1]; if (!rc) return; const CV = { owners: 4, contractors: 6, investors: 4, insurers: 5, government: 2, operators: 8 }; eng.set(view === 'industry' ? { kind: 'model', model: key, rect: rc, hover: true, spin: true } : { kind: 'stage', stage: view === 'stage' ? STG.findIndex((x) => x.id === key) : CV[key] || 4, model: 'ccgt', rect: rc, spin: true }); caps(view === 'industry' ? eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: '' })) : anchors(), rc, view === 'industry'); return; }
     if (view === 'tool') { const t = TOOL[(location.hash.split('/')[1] || '')], rc = rectOf($('#tool .vis')); if (!t || !rc) return; eng.set({ kind: 'tool', tool: t.id, model: 'ccgt', rect: rc, inputs: t.flow[0].split(/, | and /).slice(0, 4), outputs: t.features.slice(0, 4).map((f) => f[0]) }); caps(anchors(), rc); return; }
-    const vh = innerHeight, t = eng.t; let cur = null;
+    const vh = innerHeight, t = eng.t; let cur = null; sv += (Math.abs(scrollY - lastSY) - sv) * 0.2; lastSY = scrollY;
     for (const el of $$('[data-scene]')) { const r = el.getBoundingClientRect(); if (r.top <= vh * 0.5 && r.bottom > vh * 0.5) { cur = el; break; } }
     if (!cur) { eng.set(null); clearCaps(); return; }
     const name = cur.dataset.scene, rc = rectOf(cur.querySelector('.lc-sticky .vis') || cur.querySelector('.vis'));
@@ -168,10 +177,10 @@
       const id = H.ind >= 0 ? ORDER[H.ind] : ORDER[H.cyc], stg = H.stage >= 0 ? H.stage : H.ind >= 0 ? -1 : H.auto;
       v = stg >= 0 ? { kind: 'stage', stage: stg, model: id, rect: rc, completion: stg === 6 ? 0.7 : stg === 9 ? 0.55 : 1 } : { kind: 'model', model: id, rect: rc, hover: true };
       list = anchors(); const nw = $('#hero-now'); if (nw) nw.textContent = (stg >= 0 ? String(stg + 1).padStart(2, '0') + ' ' + STG[stg].name + ' / ' : '') + IX[id].name + (auto ? ' / touring the lifecycle' : '');
-    } else if (name === 'platform') { if (!layerManual && t - layerAt > 6) { layerAt = t; layerSel = (layerSel + 1) % 3; $$('#layers li').forEach((x, i) => x.classList.toggle('on', i === layerSel)); } v = { kind: 'layer', layer: layerSel, stage: layerSel, model: 'ccgt', rect: rc, spin: true }; list = anchors(); }
+    } else if (name === 'platform') { stepAuto('layer', t, 3.4, 3, layerSel, (n) => { layerSel = n; $$('#layers li').forEach((x, i) => x.classList.toggle('on', i === layerSel)); }, () => $('#layers li.on'));  v = { kind: 'layer', layer: layerSel, stage: layerSel, model: 'ccgt', rect: rc, spin: true }; list = anchors(); }
     else if (name === 'process') v = { kind: 'process', rect: rc, spin: false, yaw: -0.15, pitch: 0.28, dist: 5.6 };
-    else if (name === 'lifecycle') { v = { kind: 'stage', stage: lcSel, model: ORDER[lcInd], rect: rc, spin: true, completion: lcSel === 6 ? 0.7 : lcSel === 9 ? 0.55 : 1 }; list = anchors(); }
-    else if (name === 'industries') { if (t - indAt > 5) { indAt = t; indSel = (indSel + 1) % ORDER.length; indNow(); } v = { kind: 'model', model: ORDER[indSel], rect: rc, hover: true }; list = eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: (r.note || '').split(' / ')[0] === r.name ? '' : r.note })); }
+    else if (name === 'lifecycle') { stepAuto('life', t, 3.2, 10, lcSel, (n) => { lcSel = n; lcDetail(); }, () => $('#lc-sel [aria-selected="true"]')); v = { kind: 'stage', stage: lcSel, model: ORDER[lcInd], rect: rc, spin: true, completion: lcSel === 6 ? 0.7 : lcSel === 9 ? 0.55 : 1 }; list = anchors(); }
+    else if (name === 'industries') { stepAuto('ind', t, 3, ORDER.length, indSel, (n) => { indSel = n; indNow(); }, () => $('#ind-sel [aria-selected="true"]'));  v = { kind: 'model', model: ORDER[indSel], rect: rc, hover: true }; list = eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: (r.note || '').split(' / ')[0] === r.name ? '' : r.note })); }
     eng.set(v);
     if (name === 'hero' && v && v.kind === 'model' && eng.hover >= 0) { const ra = eng.regionAnchors()[eng.hover]; if (ra) list = [{ p: ra.p, a: ra.name, b: '' }]; }
     if (rc && list.length) caps(list, rc, name === 'industries'); else clearCaps();

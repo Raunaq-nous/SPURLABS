@@ -270,3 +270,16 @@ html{background:#0A0A0B}
 .aud-tools b{display:block;font-weight:500;font-size:16px;color:var(--ink)}.aud-tools span{display:block;font-size:14.5px;color:var(--ink2);line-height:1.45;margin-top:2px}.aud-tools a:hover b{text-decoration:underline;text-underline-offset:4px}
 .aud-more{display:inline-block;margin-top:34px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line2);padding-bottom:2px}.aud-more:hover{border-color:var(--ink2)}
 @media (max-width:900px){.aud-tabs{display:flex;overflow-x:auto;gap:26px;scrollbar-width:none}.aud-tabs button{flex:0 0 auto}.aud-cols{grid-template-columns:1fr;gap:28px}}
+
+/* progress bars on auto-advancing toggles */
+.lc-sel button,.ind-sel button{position:relative}
+.lc-sel button[aria-selected="true"]{border-top-color:#2a2a2e}
+.lc-sel button[aria-selected="true"]::before,.ind-sel button[aria-selected="true"]::before,.layers li.on::before{content:"";position:absolute;left:0;right:0;top:-2px;height:2px;background:var(--ink);transform:scaleX(var(--p,0));transform-origin:left}
+.layers li{position:relative}.layers li.on{border-top-color:var(--line)}.layers li.on::before{top:-1px}
+.ind-sel{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px 6px;margin:22px auto 0;max-width:1200px}
+.ind-sel button{all:unset;box-sizing:border-box;position:relative;cursor:pointer;border-top:2px solid #2a2a2e;padding:10px 4px 0;font-size:13.5px;line-height:1.3;color:var(--ink3);transition:color .2s}
+.ind-sel button:hover,.ind-sel button[aria-selected="true"]{color:var(--ink)}
+.ind-sel button:focus-visible{outline:1px solid var(--ink2)}
+@media (max-width:900px){.ind-sel{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#industries .vis.wide{height:min(54vh,560px);min-height:300px;margin-top:10px}
+#industries .h2{margin-bottom:0}
