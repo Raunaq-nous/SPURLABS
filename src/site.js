@@ -45,7 +45,16 @@
   /* the story */
   const STEPS = [['Find', 'the right project'], ['Shape', 'the concept, the cost and the case'], ['Plan', 'the build, generated and linked to the model'], ['Test', 'every number against reality'], ['Decide', 'at each gate and at FID'], ['Align', 'every stakeholder'], ['Deliver', 'to the approved case'], ['Recover', 'when a project is in trouble'], ['Operate', 'to full potential']];
   if ($('#story-list')) $('#story-list').innerHTML = STEPS.map(([k, w], i) => '<li><span class="n">' + String(i + 1).padStart(2, '0') + '</span><b>' + k + '</b><em>' + w + '</em><span class="t">' + D.tools.filter((t) => t.step === k).map((t) => tl(t.id)).join('') + '</span></li>').join('');
-  $('#voices-list').innerHTML = D.voices.map((v) => '<figure><blockquote>' + v.said + '</blockquote><figcaption>' + v.role + '<span>Answered by ' + tl(v.answer) + '</span></figcaption></figure>').join('');
+  const card = (v) => { const t = TOOL[v.answer]; return '<figure class="vc"><blockquote>' + v.said + '</blockquote><figcaption>' + v.role + '</figcaption><a class="shot" href="#tool/' + t.id + '" aria-label="Open ' + t.name + '"><span class="bar"><i></i><i></i><i></i><b>' + t.name + '</b></span><span class="body2">' + t.features.slice(0, 3).map((f, k) => '<span class="row"><em>' + f[0] + '</em><u style="--w:' + [86, 64, 74][k] + '%"></u></span>').join('') + '</span><span class="by">Answered by ' + t.name + ' →</span></a></figure>'; };
+  const VH = D.voices.map(card).join('');
+  $('#voices-list').innerHTML = '<div class="mq-track"><div class="mq-set">' + VH + '</div><div class="mq-set" aria-hidden="true">' + VH + '</div></div>';
+  (() => { const m = $('#voices-list'), tr = m.firstChild; let x = 0, v = 0, hov = false, w = 1; const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (rm) { m.classList.add('static'); return; }
+    m.addEventListener('mouseenter', () => (hov = true)); m.addEventListener('mouseleave', () => (hov = false));
+    m.addEventListener('wheel', (e) => { const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY; if (!d) return; v += d * 0.35; v = Math.max(-60, Math.min(60, v)); if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.preventDefault(); }, { passive: false });
+    let down = false, lx = 0; m.addEventListener('pointerdown', (e) => { if (e.target.closest('a')) return; down = true; lx = e.clientX; }); addEventListener('pointerup', () => (down = false)); addEventListener('pointermove', (e) => { if (down) { v = -(e.clientX - lx) * 1.2; x -= e.clientX - lx; lx = e.clientX; } });
+    let lastY = scrollY; (function f() { requestAnimationFrame(f); const set = tr.firstChild; w = set.offsetWidth + parseFloat(getComputedStyle(tr).columnGap || 0) || 1; const dy = scrollY - lastY; lastY = scrollY; const r = m.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) v += dy * 0.12; else return;
+      const base = hov ? 0 : 0.6; x += base + v; v *= 0.92; if (Math.abs(v) < 0.02) v = 0; x = ((x % w) + w) % w; tr.style.transform = 'translate3d(' + -x + 'px,0,0)'; })(); })();
   /* platform layers */
   let layerSel = 0, layerManual = false, layerAt = 0;
   $('#layers').addEventListener('click', (e) => { const li = e.target.closest('[data-l]'); if (!li || e.target.closest('a')) return; layerManual = true; layerSel = +li.dataset.l; $$('#layers li').forEach((x, i) => x.classList.toggle('on', i === layerSel)); });
@@ -63,8 +72,7 @@
 
   /* industries */
   let indSel = 0;
-  $('#inds').innerHTML = IND.map((x, i) => '<li><button type="button" data-k="' + i + '" aria-pressed="' + (i === 0) + '"><b>' + x.name + '</b><span>' + x.line + ' <a class="go" href="#industry/' + x.id + '">Open →</a></span></button></li>').join('');
-  $('#inds').addEventListener('click', (e) => { const b = e.target.closest('[data-k]'); if (!b) return; indSel = +b.dataset.k; $$('#inds button').forEach((x, i) => x.setAttribute('aria-pressed', String(i === indSel))); });
+  let indAt = 0; const indNow = () => { const x = IND[indSel] || IND[0]; $('#ind-now').innerHTML = '<b>' + x.name + '</b><span>' + x.line + '</span><a href="#industry/' + x.id + '">Open →</a>'; }; indNow();
 
   /* customers */
   $('#cust').innerHTML = D.customers.map((c) => '<div><a class="cc" href="#customer/' + c.id + '"><h3>' + c.name + '</h3><p class="who">' + c.who + '</p><p class="need">' + c.value + '</p><p class="more">How SPURLABS helps →</p></a></div>').join('');
@@ -142,7 +150,7 @@
     } else if (name === 'platform') { if (!layerManual && t - layerAt > 6) { layerAt = t; layerSel = (layerSel + 1) % 3; $$('#layers li').forEach((x, i) => x.classList.toggle('on', i === layerSel)); } v = { kind: 'layer', layer: layerSel, stage: layerSel, model: 'ccgt', rect: rc, spin: true }; list = anchors(); }
     else if (name === 'process') v = { kind: 'process', rect: rc, spin: false, yaw: -0.15, pitch: 0.28, dist: 5.6 };
     else if (name === 'lifecycle') { v = { kind: 'stage', stage: lcSel, model: ORDER[lcInd], rect: rc, spin: true, completion: lcSel === 6 ? 0.7 : lcSel === 9 ? 0.55 : 1 }; list = anchors(); }
-    else if (name === 'industries') { v = { kind: 'model', model: ORDER[indSel], rect: rc, hover: true }; list = eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: (r.note || '').split(' / ')[0] === r.name ? '' : r.note })); }
+    else if (name === 'industries') { if (t - indAt > 5) { indAt = t; indSel = (indSel + 1) % ORDER.length; indNow(); } v = { kind: 'model', model: ORDER[indSel], rect: rc, hover: true }; list = eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: (r.note || '').split(' / ')[0] === r.name ? '' : r.note })); }
     eng.set(v);
     if (name === 'hero' && v && v.kind === 'model' && eng.hover >= 0) { const ra = eng.regionAnchors()[eng.hover]; if (ra) list = [{ p: ra.p, a: ra.name, b: '' }]; }
     if (rc && list.length) caps(list, rc, name === 'industries'); else cap.innerHTML = '';
