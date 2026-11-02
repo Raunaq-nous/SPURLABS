@@ -53,7 +53,8 @@
     m.addEventListener('mouseenter', () => (hov = true)); m.addEventListener('mouseleave', () => (hov = false));
     m.addEventListener('wheel', (e) => { const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY; if (!d) return; v += d * 0.35; v = Math.max(-60, Math.min(60, v)); if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.preventDefault(); }, { passive: false });
     let down = false, lx = 0; m.addEventListener('pointerdown', (e) => { if (e.target.closest('a')) return; down = true; lx = e.clientX; }); addEventListener('pointerup', () => (down = false)); addEventListener('pointermove', (e) => { if (down) { v = -(e.clientX - lx) * 1.2; x -= e.clientX - lx; lx = e.clientX; } });
-    let lastY = scrollY; (function f() { requestAnimationFrame(f); const set = tr.firstChild; w = set.offsetWidth + parseFloat(getComputedStyle(tr).columnGap || 0) || 1; const dy = scrollY - lastY; lastY = scrollY; const r = m.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) v += dy * 0.12; else return;
+    let vis = false; new IntersectionObserver((en) => { vis = en[0].isIntersecting; }, { rootMargin: '100px' }).observe(m); const mw = () => { w = tr.firstChild.offsetWidth + 20 || 1; }; mw(); addEventListener('resize', mw); setTimeout(mw, 1500);
+    let lastY = scrollY; (function f() { requestAnimationFrame(f); const dy = scrollY - lastY; lastY = scrollY; if (!vis) return; v += dy * 0.12;
       const base = hov ? 0 : 0.6; x += base + v; v *= 0.92; if (Math.abs(v) < 0.02) v = 0; x = ((x % w) + w) % w; tr.style.transform = 'translate3d(' + -x + 'px,0,0)'; })(); })();
   /* platform layers */
   let layerSel = 0, layerManual = false, layerAt = 0;
@@ -75,7 +76,17 @@
   let indAt = 0; const indNow = () => { const x = IND[indSel] || IND[0]; $('#ind-now').innerHTML = '<b>' + x.name + '</b><span>' + x.line + '</span><a href="#industry/' + x.id + '">Open →</a>'; }; indNow();
 
   /* customers */
-  $('#cust').innerHTML = D.customers.map((c) => '<div><a class="cc" href="#customer/' + c.id + '"><h3>' + c.name + '</h3><p class="who">' + c.who + '</p><p class="need">' + c.value + '</p><p class="more">How SPURLABS helps →</p></a></div>').join('');
+  /* customers: one audience at a time, auto-advancing */
+  (() => { const el = $('#cust'); let k = 0;
+    const paint = () => { const c = D.customers[k], tools = Object.entries(c.how).filter(([tid]) => TOOL[tid]).slice(0, 3);
+      el.innerHTML = '<div class="aud-tabs" role="tablist" aria-label="Who it is for">' + D.customers.map((x, i) => '<button type="button" role="tab" data-c="' + i + '" aria-selected="' + (i === k) + '"><i>' + String(i + 1).padStart(2, '0') + '</i><b>' + x.name + '</b><u></u></button>').join('') + '</div>'
+        + '<div class="aud-panel" role="tabpanel"><p class="aud-who">' + c.who + '</p><p class="aud-big"><span class="mute">' + c.need + '</span> ' + c.value + '</p>'
+        + '<div class="aud-cols"><div><p class="aud-h">The problem today</p><p class="aud-pain">' + c.pain[0] + '</p></div><div class="aud-tools"><p class="aud-h">How it helps</p>' + tools.map(([tid, w]) => '<a href="#tool/' + tid + '"><b>' + TOOL[tid].name + '</b><span>' + w + '</span></a>').join('') + '</div></div>'
+        + '<a class="aud-more" href="#customer/' + c.id + '">How SPURLABS helps ' + c.name.toLowerCase() + ' →</a></div>'; };
+    const go = (i) => { k = (i + D.customers.length) % D.customers.length; paint(); };
+    el.addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (b) { el.classList.add('manual'); go(+b.dataset.c); } });
+    el.addEventListener('animationend', (e) => { if (e.animationName === 'audfill' && !el.classList.contains('manual')) go(k + 1); });
+    paint(); })();
   function custPage(id) { const c = D.customers.find((x) => x.id === id); if (!c) { location.hash = ''; return; } const stg = STG.filter((st) => Object.keys(c.how).some((tid) => TOOL[tid] && TOOL[tid].stages[st.id]));
     $('#customer').innerHTML = '<div class="page"><a class="back" href="#">← SPURLABS</a><p class="tp-meta" style="margin-top:28px">Customers</p><h1 class="tp-name">' + c.name + '</h1><p class="tp-line">' + c.value + '</p><p class="body">' + c.who + '.</p><div class="two" style="margin-top:44px"><div><p class="tp-h" style="margin-top:0">The problem today</p><ul class="pains">' + c.pain.map((x) => '<li>' + x + '</li>').join('') + '</ul></div><div><p class="tp-h" style="margin-top:0">What changes</p><p class="prob">' + c.need + '</p></div></div><p class="tp-h">How each tool helps</p><ul class="how">' + Object.entries(c.how).map(([tid, w]) => '<li>' + tl(tid) + '<span>' + w + '</span></li>').join('') + '</ul><p class="tp-h">Where it helps across the lifecycle</p><div class="tl">' + STG.map((st) => { const on = stg.includes(st), names = Object.keys(c.how).filter((tid) => TOOL[tid] && TOOL[tid].stages[st.id]).map((tid) => TOOL[tid].name); return '<div class="' + (on ? 'on' : '') + '"><i>' + st.phase + '</i><b>' + st.name + '</b>' + (on ? '<span>' + names.join(', ') + '</span>' : '') + '</div>'; }).join('') + '</div><div class="cta"><a class="btn" href="mailto:spurlabs@gmail.com?subject=SPURLABS%20for%20' + encodeURIComponent(c.name) + '">Request a briefing</a></div></div>'; window.scrollTo(0, 0); }
 
@@ -94,7 +105,7 @@
       + '<p class="tp-h">What it does</p><ul class="tp-feat">' + t.features.map((f) => '<li><b>' + f[0] + '</b><span>' + f[1] + '</span></li>').join('') + '</ul>'
       + '<div class="two" style="margin-top:8px"><div><p class="tp-h">Who uses it</p><div class="chips">' + t.customers.map((c) => '<a href="#customer/' + c + '">' + CUST[c] + '</a>').join('') + '</div></div><div><p class="tp-h">Works with</p><div class="chips">' + t.connects.map((c) => '<a href="#tool/' + c + '">' + TOOL[c].name + '</a>').join('') + '</div></div></div>'
       + (D.voices.some((x) => x.answer === t.id) ? '<p class="tp-h">What project teams tell us</p><div class="voices">' + D.voices.filter((x) => x.answer === t.id).map((x) => '<figure><blockquote>' + x.said + '</blockquote><figcaption>' + x.role + '</figcaption></figure>').join('') + '</div>' : '')
-      + '<p class="tp-h">Demo film</p>' + (FILMS.includes(t.id) ? '<video class="filmv" controls preload="metadata" src="' + ((window.Spur.FILMDATA || {})[t.id] || ('films/' + t.id + '.mp4')) + '"></video><p class="src">Mesa Ridge Energy Center, illustrative case. Voiceover to follow.</p>' : '<div class="film">' + t.name + ' in action, on a real project workflow. In production from the tool itself.</div>')
+      + '<p class="tp-h">Demo film</p>' + (FILMS.includes(t.id) ? '<video class="filmv" controls preload="none" playsinline src="' + ((window.Spur.FILMDATA || {})[t.id] || ('films/' + t.id + '.mp4')) + '"></video><p class="src">Mesa Ridge Energy Center, illustrative case. Voiceover to follow.</p>' : '<div class="film">' + t.name + ' in action, on a real project workflow. In production from the tool itself.</div>')
       + '<p class="tp-h">Value</p><p class="tp-line" style="margin-top:0;font-size:20px">' + t.value + '</p></div>';
     window.scrollTo(0, 0);
   }
@@ -119,26 +130,36 @@
 
   /* section loop */
   const cap = $('#cap');
+  let capSig = '';
+  const clearCaps = () => { if (capSig !== '') { capSig = ''; cap.innerHTML = ''; } };
   const caps = (list, rc, side) => {
     const P = list.map((c) => ({ c, q: eng.project(c.p) })).filter((o) => o.q && o.q.ok && o.q.x > rc[0] + 6 && o.q.x < rc[2] - 6 && o.q.y > rc[1] + 10 && o.q.y < rc[3] - 10).sort((a, b) => a.q.y - b.q.y);
-    let y = rc[1] + 24, svg = '', html = '';
-    if (side) { const lx = rc[2] - 196; P.forEach((o) => { o.ly = Math.max(o.q.y, y); y = o.ly + 36; svg += '<line x1="' + o.q.x.toFixed(0) + '" y1="' + o.q.y.toFixed(0) + '" x2="' + (lx - 10) + '" y2="' + o.ly.toFixed(0) + '"/><circle cx="' + o.q.x.toFixed(0) + '" cy="' + o.q.y.toFixed(0) + '" r="2.5"/>'; html += '<div class="cp side" style="left:' + lx + 'px;top:' + o.ly.toFixed(0) + 'px"><b>' + o.c.a + '</b>' + (o.c.b ? '<span>' + o.c.b + '</span>' : '') + '</div>'; }); }
-    else { const used = []; P.forEach((o) => { let ly = o.q.y; used.forEach((u) => { if (Math.abs(u.x - o.q.x) < 170 && Math.abs(u.y - ly) < 30) ly = u.y + 30; }); used.push({ x: o.q.x, y: ly }); html += '<div class="cp" style="left:' + o.q.x.toFixed(0) + 'px;top:' + ly.toFixed(0) + 'px"><b>' + o.c.a + '</b>' + (o.c.b ? '<span>' + o.c.b + '</span>' : '') + '</div>'; }); }
-    cap.innerHTML = (svg ? '<svg class="lead" width="100%" height="100%">' + svg + '</svg>' : '') + html;
+    let y = rc[1] + 24; const lx = rc[2] - 196, used = [];
+    P.forEach((o) => { if (side) { o.ly = Math.max(o.q.y, y); y = o.ly + 36; } else { let ly = o.q.y; used.forEach((u) => { if (Math.abs(u.x - o.q.x) < 170 && Math.abs(u.y - ly) < 30) ly = u.y + 30; }); used.push({ x: o.q.x, y: ly }); o.ly = ly; } });
+    const sig = (side ? 's' : 'c') + P.map((o) => o.c.a + '|' + (o.c.b || '')).join('~');
+    if (sig !== capSig) {
+      capSig = sig; let svg = '', html = '';
+      P.forEach((o) => { if (side) svg += '<line/><circle r="2.5"/>'; html += '<div class="cp' + (side ? ' side' : '') + '"><b>' + o.c.a + '</b>' + (o.c.b ? '<span>' + o.c.b + '</span>' : '') + '</div>'; });
+      cap.innerHTML = (svg ? '<svg class="lead" width="100%" height="100%">' + svg + '</svg>' : '') + html;
+    }
+    const ls = cap.querySelectorAll('line'), cs = cap.querySelectorAll('circle'), ds = cap.querySelectorAll('.cp');
+    P.forEach((o, i) => { const d = ds[i]; if (!d) return; d.style.left = (side ? lx : o.q.x).toFixed(0) + 'px'; d.style.top = o.ly.toFixed(0) + 'px';
+      if (side && ls[i]) { ls[i].setAttribute('x1', o.q.x.toFixed(0)); ls[i].setAttribute('y1', o.q.y.toFixed(0)); ls[i].setAttribute('x2', lx - 10); ls[i].setAttribute('y2', o.ly.toFixed(0)); cs[i].setAttribute('cx', o.q.x.toFixed(0)); cs[i].setAttribute('cy', o.q.y.toFixed(0)); } });
   };
-  const anchors = () => { const L = []; if (eng.comp) eng.comp.traverse((o) => { if (o.userData.cap) L.push({ p: o, a: o.userData.cap[0], b: o.userData.cap[1] }); }); return L; };
+  let ak = null, al = [];
+  const anchors = () => { if (ak === eng.key && eng.comp) return al; const L = []; if (eng.comp) eng.comp.traverse((o) => { if (o.userData.cap) L.push({ p: o, a: o.userData.cap[0], b: o.userData.cap[1] }); }); if (eng.comp) { ak = eng.key; al = L; } return L; };
   const rectOf = (el) => { if (!el) return null; const r = el.getBoundingClientRect(); return [r.left, r.top, r.right, r.bottom]; };
   const ORDER = IND.map((x) => x.id);
   function tick() {
     requestAnimationFrame(tick);
-    if (!$('#insights').hidden) { const rc = rectOf($('#insights .vis')); eng.set(rc ? { kind: 'model', model: ($('#insights .vis').dataset.model || 'nuclear'), rect: rc, hover: true } : null); cap.innerHTML = ''; return; }
+    if (!$('#insights').hidden) { const rc = rectOf($('#insights .vis')); eng.set(rc ? { kind: 'model', model: ($('#insights .vis').dataset.model || 'nuclear'), rect: rc, hover: true } : null); clearCaps(); return; }
     const view = !$('#home').hidden ? 'home' : !$('#tool').hidden ? 'tool' : !$('#industry').hidden ? 'industry' : !$('#stage').hidden ? 'stage' : !$('#customer').hidden ? 'customer' : 'other';
-    if (view === 'other') { eng.set(null); cap.innerHTML = ''; return; }
+    if (view === 'other') { eng.set(null); clearCaps(); return; }
     if (view === 'industry' || view === 'stage' || view === 'customer') { const rc = rectOf($('#' + view + ' .vis')), key = location.hash.split('/')[1]; if (!rc) return; const CV = { owners: 4, contractors: 6, investors: 4, insurers: 5, government: 2, operators: 8 }; eng.set(view === 'industry' ? { kind: 'model', model: key, rect: rc, hover: true, spin: true } : { kind: 'stage', stage: view === 'stage' ? STG.findIndex((x) => x.id === key) : CV[key] || 4, model: 'ccgt', rect: rc, spin: true }); caps(view === 'industry' ? eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: '' })) : anchors(), rc, view === 'industry'); return; }
     if (view === 'tool') { const t = TOOL[(location.hash.split('/')[1] || '')], rc = rectOf($('#tool .vis')); if (!t || !rc) return; eng.set({ kind: 'tool', tool: t.id, model: 'ccgt', rect: rc, inputs: t.flow[0].split(/, | and /).slice(0, 4), outputs: t.features.slice(0, 4).map((f) => f[0]) }); caps(anchors(), rc); return; }
     const vh = innerHeight, t = eng.t; let cur = null;
     for (const el of $$('[data-scene]')) { const r = el.getBoundingClientRect(); if (r.top <= vh * 0.5 && r.bottom > vh * 0.5) { cur = el; break; } }
-    if (!cur) { eng.set(null); cap.innerHTML = ''; return; }
+    if (!cur) { eng.set(null); clearCaps(); return; }
     const name = cur.dataset.scene, rc = rectOf(cur.querySelector('.lc-sticky .vis') || cur.querySelector('.vis'));
     let v = null, list = [];
     if (name === 'hero') {
@@ -153,7 +174,7 @@
     else if (name === 'industries') { if (t - indAt > 5) { indAt = t; indSel = (indSel + 1) % ORDER.length; indNow(); } v = { kind: 'model', model: ORDER[indSel], rect: rc, hover: true }; list = eng.regionAnchors().filter(Boolean).slice(0, 6).map((r) => ({ p: r.p, a: r.name, b: (r.note || '').split(' / ')[0] === r.name ? '' : r.note })); }
     eng.set(v);
     if (name === 'hero' && v && v.kind === 'model' && eng.hover >= 0) { const ra = eng.regionAnchors()[eng.hover]; if (ra) list = [{ p: ra.p, a: ra.name, b: '' }]; }
-    if (rc && list.length) caps(list, rc, name === 'industries'); else cap.innerHTML = '';
+    if (rc && list.length) caps(list, rc, name === 'industries'); else clearCaps();
   }
   requestAnimationFrame(tick);
 

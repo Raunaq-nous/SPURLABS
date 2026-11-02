@@ -27,7 +27,7 @@
   S.lineArt = lineArt;
   class Engine {
     constructor(canvas) {
-      this.cv = canvas; this.r = new T.WebGLRenderer({ canvas, alpha: true, antialias: true }); this.r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); this.r.localClippingEnabled = true; this.r.autoClear = false;
+      this.cv = canvas; this.r = new T.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' }); this.pr = Math.min(window.devicePixelRatio || 1, 1.5); this.r.setPixelRatio(this.pr); this.cache = new Map(); this.fa = 0; this.fn = 0; this.r.localClippingEnabled = true; this.r.autoClear = false;
       this.scene = new T.Scene(); this.scene.add(new T.AmbientLight(0xffffff, 0.7)); 
       this.cam = new T.PerspectiveCamera(30, 1, 0.05, 200); this.scene.fog = new T.Fog(0x000000, 5, 20); this.root = new T.Group(); this.scene.add(this.root);
       this.key = ''; this.tr = null; this.alpha = 0; this.t = 0; this.mouse = { x: -999, y: -999 }; this.hover = -1; this.built = 0; this.ray = new T.Raycaster();
@@ -40,10 +40,12 @@
     set(v) { this.want = v; }
     apply(v) {
       const key = v ? JSON.stringify({ k: v.kind, m: v.model, s: v.stage, t: v.tool }) : '';
-      if (key !== this.key) { this.key = key; while (this.root.children.length) this.root.remove(this.root.children[0]); this.comp = v ? S.compose(v) : null; if (this.comp) { this.root.add(this.comp); this.comp.updateMatrixWorld(true); const b = new T.Box3(); this.comp.traverse((o) => { if (o.isMesh && o.visible) b.expandByObject(o); }); if (b.isEmpty() || b.getSize(new T.Vector3()).length() < 0.5) b.setFromObject(this.comp); this.box = b; this.ylo = b.min.y; this.yhi = b.max.y; const cc = b.getCenter(new T.Vector3()); this.parts = []; this.comp.traverse((o) => { if (o.isMesh && o.userData.name && !o.userData.dim && o.userData.region >= 0) { const cw = new T.Box3().setFromObject(o).getCenter(new T.Vector3()), ps = o.parent.getWorldScale(new T.Vector3()).x || 1, d = cw.sub(cc); d.y = Math.max(0, d.y) * 0.6 + 0.14; this.parts.push({ o, base: o.position.clone(), d: d.multiplyScalar(0.5 / ps) }); } }); } this.built = this.t; }
+      if (key !== this.key) { this.key = key; while (this.root.children.length) this.root.remove(this.root.children[0]); const hit = key && this.cache.get(key); if (hit) { this.comp = hit.comp; this.root.add(this.comp); this.box = hit.box; this.ylo = hit.ylo; this.yhi = hit.yhi; this.parts = hit.parts; this.parts.forEach((q) => q.o.position.copy(q.base)); this.built = this.t; this.hlLast = null; } else this.comp = v ? S.compose(v) : null; if (this.comp && !hit) { this.root.add(this.comp); this.comp.updateMatrixWorld(true); const b = new T.Box3(); this.comp.traverse((o) => { if (o.isMesh && o.visible) b.expandByObject(o); }); if (b.isEmpty() || b.getSize(new T.Vector3()).length() < 0.5) b.setFromObject(this.comp); this.box = b; this.ylo = b.min.y; this.yhi = b.max.y; const cc = b.getCenter(new T.Vector3()); this.parts = []; this.comp.traverse((o) => { if (o.isMesh && o.userData.name && !o.userData.dim && o.userData.region >= 0) { const cw = new T.Box3().setFromObject(o).getCenter(new T.Vector3()), ps = o.parent.getWorldScale(new T.Vector3()).x || 1, d = cw.sub(cc); d.y = Math.max(0, d.y) * 0.6 + 0.14; this.parts.push({ o, base: o.position.clone(), d: d.multiplyScalar(0.5 / ps) }); } }); } this.built = this.t; }
+      if (this.comp && key && !this.cache.has(key)) { this.cache.set(key, { comp: this.comp, box: this.box, ylo: this.ylo, yhi: this.yhi, parts: this.parts }); if (this.cache.size > 12) this.cache.delete(this.cache.keys().next().value); }
     }
     frame(dt) {
       this.t += this.reduced ? 0 : dt; const v = this.want; this.apply(v);
+      if (this.comp && this.alpha > 0.5) { this.fa += dt; if (++this.fn >= 40) { const avg = this.fa / this.fn; this.fa = 0; this.fn = 0; if (avg > 0.026 && this.pr > 0.8) { this.pr = Math.max(0.75, this.pr * 0.8); this.r.setPixelRatio(this.pr); this.resize(); } } }
       const r = this.r; r.setScissorTest(false); r.setClearColor(0x000000, 0); r.clear();
       const tr = v && v.rect; this.alpha += ((tr && this.comp ? 1 : 0) - this.alpha) * Math.min(1, dt * 4);
       if (tr) this.tr = tr.slice();
@@ -66,7 +68,7 @@
       r.setViewport(x0, H - y1, w, h); r.setScissor(x0, H - y1, w, h); r.setScissorTest(true); r.render(this.scene, this.cam); r.setScissorTest(false); r.setViewport(0, 0, window.innerWidth, H);
     }
     project(obj) { const v = (obj.isVector3 ? obj.clone() : obj.getWorldPosition(new T.Vector3())).project(this.cam), tr = this.tr; if (!tr) return null; return { x: tr[0] + ((v.x + 1) / 2) * (tr[2] - tr[0]), y: tr[1] + ((1 - v.y) / 2) * (tr[3] - tr[1]), ok: Math.abs(v.x) <= 1 && Math.abs(v.y) <= 1 }; }
-    regionAnchors() { const out = []; if (!this.comp) return out; this.comp.traverse((o) => { if (o.isMesh && o.userData.name && !o.userData.dim && out[o.userData.region] == null) { const b = new T.Box3().setFromObject(o), c = b.getCenter(new T.Vector3()); c.y = b.max.y; out[o.userData.region] = { p: c, name: o.userData.name, note: o.userData.note }; } }); return out; }
+    regionAnchors() { if (this._raK === this.key && this._ra) return this._ra; const out = []; if (!this.comp) return out; this._raK = this.key; this._ra = out; this.comp.traverse((o) => { if (o.isMesh && o.userData.name && !o.userData.dim && out[o.userData.region] == null) { const b = new T.Box3().setFromObject(o), c = b.getCenter(new T.Vector3()); c.y = b.max.y; out[o.userData.region] = { p: c, name: o.userData.name, note: o.userData.note }; } }); return out; }
   }
   S.Engine = Engine;
 
