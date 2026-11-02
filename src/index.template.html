@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SPURLABS | Enterprise AI for capital projects</title>
+<meta name="description" content="SPURLABS is the enterprise AI platform for capital projects: tools for every stage, from first concept to final day.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>{{CSS}}</style>
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="cap" aria-hidden="true"></div>
+<header class="nav">
+<a class="brand" href="#" aria-label="SPURLABS home"><svg class="wm" viewBox="0 0 150 22" role="img" aria-hidden="true"><text x="0" y="17.5"><tspan class="w1">SPUR</tspan><tspan class="w2">LABS</tspan></text></svg></a>
+<nav class="menu" aria-label="Main">
+<a href="#" data-go="platform">Platform</a><div class="tm"><button type="button" aria-expanded="false">Lifecycle</button><div class="tm-panel one" id="m-life" hidden></div></div><div class="tm"><button type="button" aria-expanded="false">Industries</button><div class="tm-panel two" id="m-ind" hidden></div></div><div class="tm"><button type="button" aria-expanded="false">Customers</button><div class="tm-panel one" id="m-cust" hidden></div></div>
+<div class="tm"><button type="button" id="tools-btn" aria-expanded="false" aria-controls="tools-menu">Tools</button><div class="tm-panel" id="tools-menu" hidden></div></div>
+<a href="#spurs">Spurs</a>
+<a class="cta-nav" href="mailto:spurlabs@gmail.com?subject=SPURLABS%20briefing">Request a briefing</a>
+</nav>
+</header>
+<main id="home">
+<section class="sec hero" data-scene="hero">
+<div class="vis hero-vis" data-vis></div>
+<p class="now" id="hero-now"></p>
+<div class="hero-txt">
+<p class="eyebrow">Enterprise AI for capital projects</p>
+<h1 class="h1">AI for <span class="dd" id="dd-stage"></span> of <span class="dd" id="dd-ind"></span></h1>
+<p class="hint">Choose a stage and an industry to see the tools at work.</p>
+<div id="hd" class="hd" aria-live="polite"></div>
+</div>
+</section>
+<section class="sec" id="platform" data-scene="platform">
+<div class="split">
+<div class="txt">
+<h2 class="h2"><span class="mute">One enterprise AI platform.</span> Three layers of value.</h2>
+<p class="body">Select a layer to see it on the build.</p>
+<ol class="layers" id="layers"></ol>
+<p class="body">One project record across every tool and every stakeholder. Every figure traceable to its source, and people approve every output.</p>
+</div>
+<div class="vis" data-vis></div>
+</div>
+</section>
+<section class="sec" id="process" data-scene="process">
+<h2 class="h2 center"><span class="mute">From documents</span> to decisions.</h2>
+<div class="tri">
+<div class="io"><p class="io-h">In</p><p class="it">Market signals<span>Resource plans, interconnection queues, permits, filings</span></p><p class="it">Engineering<span>Briefs, layouts, IFC models, equipment lists</span></p><p class="it">Estimates and bids<span>Quantities, rates, vendor quotes</span></p><p class="it">Schedules<span>P6 and Microsoft Project, crews, productivity</span></p><p class="it">Contracts and documents<span>EPC, interconnection, supply, studies, correspondence</span></p><p class="it">Site truth<span>Drone, 360° and fixed-camera imagery</span></p><p class="it">Stakeholders<span>Pulse and readiness responses from every party</span></p><p class="it">Operating data<span>Availability, efficiency, output, maintenance</span></p><p class="it">Evidence<span>20,000+ completed projects, audits, lessons</span></p></div>
+<div class="vis" data-vis></div>
+<div class="io out"><p class="io-h">Out</p><p class="it">Projects worth pursuing<span>Ranked by fit and deliverability</span></p><p class="it">The concept to build<span>Generated, costed, compared on one basis</span></p><p class="it">A cost line and an investment case<span>Capital to end of life, returns at P50 and P80</span></p><p class="it">A generated, resource-loaded schedule<span>Linked to the 3D model, P50 and P80 dates</span></p><p class="it">A number that holds<span>Outturn and contingency from comparables</span></p><p class="it">Gate-ready decisions<span>Complete gate packs, every gap owned</span></p><p class="it">Aligned stakeholders<span>Divergence flagged before it costs money</span></p><p class="it">Early warning and recovery<span>Drift seen, recovery priced</span></p><p class="it">Assets at full potential<span>The value gap, and where to spend</span></p></div>
+</div>
+</section>
+<section class="sec" id="lifecycle" data-scene="lifecycle">
+<h2 class="h2"><span class="mute">The capital project lifecycle.</span> Develop, decide, deliver, operate.</h2>
+<div class="lc-ind" id="lc-ind" aria-label="Industry"></div>
+<div class="vis wide" data-vis></div>
+<div class="lc-sel" id="lc-sel" role="tablist" aria-label="Lifecycle stages"></div>
+<div class="lc-detail" id="lc-detail"></div>
+</section>
+<section class="sec" id="industries" data-scene="industries">
+<div class="split">
+<div class="txt"><h2 class="h2"><span class="mute">One platform.</span> Every kind of build.</h2><ol class="inds" id="inds"></ol></div>
+<div class="vis" data-vis></div>
+</div>
+</section>
+<section class="sec" id="customers" data-scene="none">
+<h2 class="h2"><span class="mute">Built for everyone</span> who carries the risk of a capital project.</h2>
+<div class="cust" id="cust"></div>
+</section>
+<section class="sec" id="voices" data-scene="none">
+<h2 class="h2"><span class="mute">What project teams</span> tell us.</h2>
+<p class="body lead">Paraphrased from conversations with owner and utility teams, anonymized.</p>
+<div class="voices" id="voices-list"></div>
+</section>
+<section class="sec final" data-scene="none">
+<h2 class="h2 center"><span class="mute">The future isn’t guessed.</span> It’s built.</h2>
+<div class="cta center"><a class="btn" href="mailto:spurlabs@gmail.com?subject=SPURLABS%20briefing">Request a briefing</a></div>
+</section>
+<footer class="ft"><span>SPURLABS</span><span>Builds are modelled on real asset types. Figures shown are illustrative.</span><span>© 2026</span></footer>
+</main>
+<main id="tool" hidden></main>
+<main id="customer" hidden></main>
+<main id="industry" hidden></main>
+<main id="stage" hidden></main>
+<main id="insights" hidden></main>
+<main id="logo" hidden></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>{{JS}}</script>
+</body>
+</html>
