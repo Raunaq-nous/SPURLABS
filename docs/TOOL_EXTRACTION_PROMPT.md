@@ -27,7 +27,7 @@ Fill every field from the code, not from assumptions. Where something is not in 
 ## 2. Load the demo case
 
 Use the case data in `spurlabs/case.json` if it exists; otherwise create it with these two cases so every tool tells the same story:
-- Case A, Mesa Ridge Energy Center: a 1.2 GW 2x1 H-class combined-cycle plant in Arizona with an air-cooled condenser; FID March 2027; base estimate $2.36B.
+- Case A, Mesa Ridge Energy Center: a 1.2 GW 2x1 H-class combined-cycle plant with an air-cooled condenser, in a fictional market; FID March 2027; base estimate $2.36B.
 - Case B, Harbor Point AI Campus: a 300 MW data center campus with on-site gas turbines, battery storage and a 345 kV substation; FID June 2027.
 
 Put the tool into a realistic state for Case A (and Case B where it applies): data loaded, analysis run, results visible.
