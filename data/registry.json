@@ -118,7 +118,7 @@
     "lessons-learned": "Starts every project with the lessons the last ones paid for",
     "stage-gate": "Makes each gate decision on a complete pack",
     "alignment-room": "Keeps contractors, lenders and regulators aligned between gates",
-    "cockpit": "Flags drift across the portfolio before the report",
+    "cockpit": "Measures progress from the site itself, and flags drift before the report",
     "asset-potential": "Recovers the value the asset was approved to earn"
    }
   },
@@ -146,11 +146,12 @@
     "opportunity-map": "A pipeline of forming projects months before tender, with the owner’s likely contracting route",
     "cost-line": "Prices every package against should-cost",
     "generative-scheduling": "Builds the baseline from comparable durations",
-    "generative-twin": "Proves progress from site imagery",
+    "generative-twin": "Shows the build sequence in 4D before mobilization",
     "risk-analysis": "Prices risk into the bid before it is signed",
     "lessons-learned": "Brings lessons from past bids and claims into the next bid",
     "alignment-room": "Surfaces owner and supplier issues before they become disputes",
-    "forensic": "Quantifies delay and disruption for claims"
+    "forensic": "Quantifies delay and disruption for claims",
+    "cockpit": "Proves progress and delay from site imagery, element by element"
    }
   },
   {
@@ -205,7 +206,8 @@
     "generative-twin": "Verifies progress and start-up readiness",
     "realityscan": "Shows how comparable projects actually performed",
     "risk-analysis": "Quantifies the exposure being insured",
-    "forensic": "Reconstructs events and quantifies the claim"
+    "forensic": "Reconstructs events and quantifies the claim",
+    "cockpit": "Verifies progress and start-up readiness from site imagery"
    }
   },
   {
@@ -778,7 +780,7 @@
    "line": "The project in 4D, generated from the schedule and the model, and kept true by site imagery from the first plan to the operating asset.",
    "desc": [
     "Generative Digital Twin reads the project schedule, recognizes what kind of facility it describes, and generates a 4D model of it: components laid out by industry rules, each linked to the activities that build it. Every component records where its geometry, position and timing came from, so the model can be trusted and corrected.",
-    "The same twin measures real progress from site imagery, shows system readiness at commissioning, and carries into operations as the as-built model."
+    "The twin is the baseline Site Vision measures against: in execution, Cockpit compares site imagery with the twin’s planned state for each date, element by element. The model exports to IFC4, the open exchange format for building and plant models, shows system readiness at commissioning, and carries into operations as the as-built model."
    ],
    "features": [
     [
@@ -794,8 +796,8 @@
      "Construction sequence optimized, with Monte Carlo dates"
     ],
     [
-     "Progress from imagery",
-     "Drone and site imagery measured against plan"
+     "Baseline for Site Vision",
+     "The planned state for every date, which Cockpit’s Site Vision measures site imagery against"
     ],
     [
      "Commissioning readiness",
@@ -804,6 +806,10 @@
     [
      "As-built operating twin",
      "Design and construction data carried into operations"
+    ],
+    [
+     "IFC4 export",
+     "The generated model exported in the open IFC4 format"
     ]
    ],
    "stages": {
@@ -836,7 +842,8 @@
     "Facility archetype recognition across 13 archetypes, from the schedule itself",
     "WBS grouping candidates scored by coverage and dependency lift",
     "Rule-based schematic layout for each industry family",
-    "Component model with separate provenance for geometry, position and timing, and render checks before display"
+    "Component model with separate provenance for geometry, position and timing, and render checks before display",
+    "IFC4 export of the generated model, with provenance kept for every element"
    ]
   },
   {
@@ -1044,8 +1051,8 @@
    "status": "Pilot-ready",
    "line": "Every project on one screen, with drift flagged before the monthly report.",
    "desc": [
-    "Cockpit brings every project and programme into one view: cost and dates against the approved case, contingency drawn against progress, and the leading indicators that move first. It flags projects whose spending shape is unlike completed comparables at the same point, in both directions.",
-    "When a project drifts, Cockpit prices the recovery options against the cost of a day of delay, so the decision to accelerate is taken on value. Boards receive exceptions, not status."
+    "Cockpit is the owner’s single pane of glass for execution: cost, schedule, risk, safety, commitments and approved changes against the approved case, for one project or a portfolio. Its Site Vision module reads drone, fixed-camera and 360-degree imagery, recognizes installed elements and compares them with the Generative Digital Twin’s planned state for that date, element by element, so progress is measured rather than reported.",
+    "Measured progress updates earned value (the schedule and cost performance indices) and the forecast at completion. When a project drifts, Cockpit generates recovery options and prices each against the cost of a day of delay, so the decision to accelerate is taken on value. Boards receive exceptions, not status."
    ],
    "features": [
     [
@@ -1059,6 +1066,18 @@
     [
      "Drift triggers",
      "Cost and date drift against the investment case"
+    ],
+    [
+     "Site Vision",
+     "Computer vision on drone, fixed-camera and 360-degree imagery, checked element by element against the twin’s plan for that date"
+    ],
+    [
+     "Measured earned value",
+     "Schedule and cost performance indices from measured, not reported, progress"
+    ],
+    [
+     "Single pane of glass",
+     "Cost, schedule, risk, safety, commitments and approved changes on one screen, for a project or a portfolio"
     ],
     [
      "Exception reporting",
@@ -1081,22 +1100,26 @@
    "customers": [
     "owners",
     "investors",
-    "government"
+    "government",
+    "contractors",
+    "insurers"
    ],
    "connects": [
     "generative-twin",
     "risk-analysis",
+    "investment-case",
     "forensic"
    ],
    "value": "Problems seen weeks earlier, and recovery funded on its value.",
    "problem": "Boards see status reports weeks after problems begin.",
    "flow": [
-    "Cost, schedule and progress from existing systems",
-    "Compares every project with comparables and the approved case",
-    "Exceptions and priced recovery options, early"
+    "Site imagery, cost, schedule and progress from existing systems",
+    "Measures progress against the twin, updates earned value, and compares every project with comparables and the approved case",
+    "Exceptions and priced recovery options, weeks earlier"
    ],
    "step": "Deliver",
    "how": [
+    "Computer vision that recognizes installed elements in site imagery and compares them with the twin’s planned state for the same date",
     "Schedule performance index and a top-down cost index for every project",
     "Capital, commitment and approved-change aggregation across the portfolio",
     "Risk exposure aggregated only from eligible, quantified risks",
