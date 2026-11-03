@@ -157,7 +157,7 @@
       a(2, cyl(0.002, 0.014, 0.2, 0, 1.42, 0, 12)); a(3, ...lattice(0.1, 0.0, 0.03, 0.03, 1.25, 0.37, 10, 0.003), bar([0.0, 1.62, 0], [0.48, 1.62, 0], 0.006), bar([0.0, 1.62, 0], [-0.15, 1.62, 0], 0.006), bar([0.4, 1.62, 0], [0.4, 1.45, 0], 0.002));
     }]
   };
-  const NOTES = { dc: ['Digital Twin / hall 2 at 58%', 'Concept Twin / direct-to-chip cooling', 'Opportunity Map / turbine slots 2027', 'Cost Model / storage per kWh', 'Risk Analysis / energization P80 April', 'Cockpit / interconnection drift', 'Yard / 64 comparable campuses'], ccgt: ['Concept Twin / 2x1 H-class chosen', 'Digital Twin / HRSG 1 modules set', 'Outturn / stack within P50', 'Digital Twin / turbine hall 62% verified', 'Mr. Scheduler / ACC fan deck critical', 'Opportunity Map / transformer 30 months', 'Yard / 41 comparable plants'] };
+  const NOTES = { dc: ['Site Vision / hall 2 at 58%', 'Generative Concepts / direct-to-chip cooling', 'Opportunity Map / turbine slots 2027', 'Costline / storage per kWh', 'Risk Analysis / energization P80 April', 'Cockpit / interconnection drift', 'RealityScan / 64 comparable campuses'], ccgt: ['Generative Concepts / 2x1 H-class chosen', 'Generative Digital Twin / HRSG 1 modules set', 'Outturn Forecast / stack within P50', 'Site Vision / turbine hall 62% verified', 'Generative Scheduling / ACC fan deck critical', 'Opportunity Map / transformer 30 months', 'RealityScan / 41 comparable plants'] };
   const cache = {};
   function industry(id) {
     if (cache[id]) return cache[id].clone();

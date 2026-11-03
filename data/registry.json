@@ -437,7 +437,7 @@
    "name": "Opportunity Map",
    "layer": "frontline",
    "vis": 0,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "See the projects forming in your markets before they reach a tender, ranked by how well they fit.",
    "desc": [
     "Opportunity Map watches the signals that come before a capital project is announced: utility resource plans, interconnection queues, permits, land and water rights, financing and offtake. It turns them into a ranked list of projects forming, with the next action for each.",
@@ -490,15 +490,14 @@
     "Signal ingestion from plans, queues, permits and filings, with entity resolution across sources",
     "Fit scoring against the customer’s criteria, with the evidence behind each score",
     "Delivery-capacity model from contractor backlog, workforce and equipment lead times"
-   ],
-   "product": "Capital Projects Intelligence"
+   ]
   },
   {
    "id": "generative-concepts",
    "name": "Generative Concepts",
    "layer": "frontline",
    "vis": 1,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Generates and costs every viable concept for the site and the brief, so the best one is chosen on evidence rather than habit.",
    "desc": [
     "Concept Twin generates layouts and quantities from a brief, then builds each concept as a digital twin: equipment, footprint, capital cost, operating cost and lifetime economics. Concepts are compared on the same basis, so the choice rests on evidence rather than on whichever option was studied first.",
@@ -562,7 +561,7 @@
    "name": "Costline",
    "layer": "frontline",
    "vis": 2,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Every cost of the project on one traceable line: capital, contingency, escalation, operating, lifecycle and end-of-life.",
    "desc": [
     "Cost Model builds estimates bottom-up from quantities and unit rates, using a cost database drawn from completed projects. It produces a should-cost for every package, so bids can be tested line by line against what the work ought to cost.",
@@ -641,7 +640,7 @@
    "name": "Investment Case",
    "layer": "integrated",
    "vis": 4,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "The investment case, recalculated the moment cost, dates or prices change, at P50 and at P80.",
    "desc": [
     "Abacus is the project’s financial model: capital spend, revenues, operating cost, financing and returns. It reads the estimate from Cost Model and the dates from Mr. Scheduler and Digital Twin, so the investment case moves when the project does.",
@@ -701,7 +700,7 @@
    "name": "Generative Scheduling",
    "layer": "frontline",
    "vis": 3,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "A resource-loaded, logic-linked schedule generated from the scope, with durations and crews computed rather than guessed.",
    "desc": [
     "Generative Scheduling builds the schedule from the scope rather than from a template. Activities and logic come from the work breakdown and from comparable schedules; durations are computed from quantities, productivity rates and the crews actually available, not typed in. Third-party and permitting activities are modelled explicitly, so their knock-on effect on engineering and construction is visible from the start.",
@@ -775,7 +774,7 @@
    "name": "Generative Digital Twin",
    "layer": "integrated",
    "vis": 6,
-   "status": "In build",
+   "status": "Pilot-ready",
    "line": "The project in 4D, generated from the schedule and the model, and kept true by site imagery from the first plan to the operating asset.",
    "desc": [
     "Generative Digital Twin reads the project schedule, recognizes what kind of facility it describes, and generates a 4D model of it: components laid out by industry rules, each linked to the activities that build it. Every component records where its geometry, position and timing came from, so the model can be trusted and corrected.",
@@ -845,7 +844,7 @@
    "name": "Risk Analysis",
    "layer": "integrated",
    "vis": 5,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Risks identified, quantified and owned in days, not months.",
    "desc": [
     "Risk Analysis identifies risks from the project’s documents and from what went wrong on comparable projects, then quantifies their cost and schedule exposure with Monte Carlo simulation. Each risk has an owner, a mitigation and a value.",
@@ -917,7 +916,7 @@
    "name": "RealityScan",
    "layer": "portfolio",
    "vis": 2,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "How comparable projects really performed, and where yours stands, in 24 to 48 hours.",
    "desc": [
     "RealityScan assembles the record of comparable projects: what they were estimated to cost, what they cost, how late they were and why. It benchmarks a project’s estimate and schedule against that record and shows where it sits.",
@@ -976,15 +975,14 @@
     "Similarity matching on project attributes to assemble comparables",
     "Percentile benchmarking of cost, schedule and performance",
     "Root-cause classification across the reference class"
-   ],
-   "product": "Capital Projects Intelligence"
+   ]
   },
   {
    "id": "outturn",
    "name": "Outturn Forecast",
    "layer": "integrated",
    "vis": 4,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "The outside view on cost, schedule and readiness, before capital is committed.",
    "desc": [
     "Outturn forecasts final cost and schedule from the outcomes of completed comparable projects, from P5 to P95, and sets contingency at P30, P50 and P80 for the project director, the sponsor and the funders. Only traits supported by evidence can move the number.",
@@ -1043,7 +1041,7 @@
    "name": "Cockpit",
    "layer": "integrated",
    "vis": 6,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Every project on one screen, with drift flagged before the monthly report.",
    "desc": [
     "Cockpit brings every project and programme into one view: cost and dates against the approved case, contingency drawn against progress, and the leading indicators that move first. It flags projects whose spending shape is unlike completed comparables at the same point, in both directions.",
@@ -1110,7 +1108,7 @@
    "name": "Forensic",
    "layer": "integrated",
    "vis": 9,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "When a project is in trouble: what happened, why, what it is worth, and how to reset it.",
    "desc": [
     "Forensic tests a business case in hours against eight checks on its risk arithmetic, before it reaches a board. When a project is already in difficulty, it reconstructs what happened, tests the root causes and quantifies delay and disruption for claims and disputes.",
@@ -1167,7 +1165,7 @@
    "name": "Lessons Learned",
    "layer": "portfolio",
    "vis": 7,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Lessons from your own projects and from the industry’s, cited to the page and surfaced at the stage where they apply.",
    "problem": "Lessons are written at close-out and filed, then the same mistakes recur on the next project.",
    "flow": [
@@ -1231,15 +1229,14 @@
     "Hybrid vector and keyword retrieval with page-level citations",
     "Language models that read and extract; numbers are never generated by them",
     "Statistical test of which practices predicted outcomes"
-   ],
-   "product": "Capital Projects Intelligence"
+   ]
   },
   {
    "id": "stage-gate",
    "name": "Stage Gate Assistant",
    "layer": "integrated",
    "vis": 4,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Designs each stage gate, assembles the evidence it needs, and makes the project gate-ready.",
    "problem": "Gates are passed on incomplete documents and opinion, so weak projects reach FID and strong ones wait.",
    "flow": [
@@ -1306,7 +1303,7 @@
    "name": "Alignment Room",
    "layer": "integrated",
    "vis": 5,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "Every stakeholder on one live readiness check, so problems surface while they are still cheap.",
    "problem": "Owners, contractors, lenders, insurers and regulators each hold part of the truth, in their own systems, and problems surface only when they reach the report.",
    "flow": [
@@ -1380,7 +1377,7 @@
    "name": "Asset Potential",
    "layer": "integrated",
    "vis": 8,
-   "status": "In production",
+   "status": "Pilot-ready",
    "line": "The gap between what an asset earns and what it could, in dollars a year.",
    "desc": [
     "Asset Potential measures an operating asset against its design and its peers on the operating twin: availability, efficiency, output and cost. It puts a value on each gap and on the actions that would close it.",
