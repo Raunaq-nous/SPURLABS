@@ -119,7 +119,11 @@
     "stage-gate": "Makes each gate decision on a complete pack",
     "alignment-room": "Keeps contractors, lenders and regulators aligned between gates",
     "cockpit": "Measures progress from the site itself, and flags drift before the report",
-    "asset-potential": "Recovers the value the asset was approved to earn"
+    "asset-potential": "Recovers the value the asset was approved to earn",
+    "cost-line": "Traces the board figure to a single quote, and tests every bid against should-cost",
+    "generative-scheduling": "Computes the schedule from scope and crews, with utilities, permits and equipment makers modelled as dependencies",
+    "risk-analysis": "Sets contingency on quantified exposure at P50 and P80",
+    "realityscan": "Tests the estimate against comparable plants, and finds the scope it leaves out, in 48 hours"
    }
   },
   {
@@ -443,7 +447,7 @@
    "line": "See the projects forming in your markets before they reach a tender, ranked by how well they fit.",
    "desc": [
     "Opportunity Map watches the signals that come before a capital project is announced: utility resource plans, interconnection queues, permits, land and water rights, financing and offtake. It turns them into a ranked list of projects forming, with the next action for each.",
-    "The same view shows whether the market can deliver: contractor backlogs, workforce and equipment lead times. A pursuit that looks attractive but cannot be built on time is flagged before effort is spent on it."
+    "Its Build Advisor tests whether each project can be delivered by the date it needs. It checks six constraints (gas turbine delivery slots, transformer lead times, contractor backlog, craft labor, interconnection and gas supply) and gives each a verdict, a date effect and its source. A pursuit that looks attractive but cannot be built on time is flagged before effort is spent on it."
    ],
    "features": [
     [
@@ -461,6 +465,14 @@
     [
      "Alerts and next actions",
      "What changed, and who should act on it"
+    ],
+    [
+     "Build Advisor",
+     "Six delivery constraints, each with a verdict, a date effect and its source: turbine slots, transformers, contractor backlog, craft labor, interconnection, gas supply"
+    ],
+    [
+     "Pursuit case",
+     "A pursuit case and delivery plan generated for each shortlisted project"
     ]
    ],
    "stages": {
@@ -478,20 +490,21 @@
    ],
    "connects": [
     "generative-concepts",
+    "generative-scheduling",
     "realityscan"
    ],
    "value": "Effort goes to projects that can be won and delivered.",
    "problem": "Pursuit teams find projects late, from tenders, after the best positions are taken.",
    "flow": [
     "Market signals: plans, queues, permits, financing",
-    "Ranks forming projects by fit and checks delivery capacity",
-    "A pursuit list with the evidence and next action for each"
+    "Ranks forming projects by fit, then tests each against the six constraints that set the delivery date",
+    "A pursuit list with the evidence, the earliest credible date and the next action for each"
    ],
    "step": "Find",
    "how": [
     "Signal ingestion from plans, queues, permits and filings, with entity resolution across sources",
     "Fit scoring against the customer’s criteria, with the evidence behind each score",
-    "Delivery-capacity model from contractor backlog, workforce and equipment lead times"
+    "Build Advisor: a deliverability model across turbine slots, transformer lead times, contractor backlog, craft labor, interconnection and gas supply, each verdict linked to its source"
    ]
   },
   {
@@ -502,8 +515,8 @@
    "status": "Pilot-ready",
    "line": "Generates and costs every viable concept for the site and the brief, so the best one is chosen on evidence rather than habit.",
    "desc": [
-    "Concept Twin generates layouts and quantities from a brief, then builds each concept as a digital twin: equipment, footprint, capital cost, operating cost and lifetime economics. Concepts are compared on the same basis, so the choice rests on evidence rather than on whichever option was studied first.",
-    "Assumptions such as fuel price, capacity factor or cooling technology can be changed live, and every concept updates. The chosen concept carries its quantities and costs into the estimate, the schedule and the financial model."
+    "Generative Concepts generates every viable concept for the site and the brief. Its layout generator works from the site boundary, fixed anchors and equipment envelopes, enumerates every arrangement, screens each against hard engineering checks and compares the survivors on a Pareto front; every rejected option keeps the reason it failed. On the illustrative combined-cycle case, 192 layouts were enumerated and 36 passed.",
+    "Each surviving concept is tested outside-in against comparable plants and priced from an alternatives library of design and contracting options. Assumptions such as fuel price, capacity factor or cooling technology can be changed live, and every concept updates. The chosen concept carries its layout and quantities into Costline, Generative Scheduling and the Investment Case."
    ],
    "features": [
     [
@@ -529,6 +542,14 @@
     [
      "Outside-in check",
      "The concept’s cost per unit of capacity against comparable plants, before it is chosen"
+    ],
+    [
+     "Layout generator",
+     "Every arrangement enumerated from the site boundary, anchors and equipment envelopes, and screened against hard engineering checks"
+    ],
+    [
+     "Rejection ledger",
+     "Every rejected option, with the check it failed"
     ]
    ],
    "stages": {
@@ -553,7 +574,7 @@
    ],
    "step": "Shape",
    "how": [
-    "Generative layout from the brief, site constraints and equipment libraries",
+    "Constraint-based enumeration of layouts, screened against hard engineering checks, with Pareto comparison of the survivors",
     "Large option spaces explored, not three hand-drawn concepts",
     "Each option costed by Costline and valued by Investment Case on one basis"
    ]
@@ -566,8 +587,8 @@
    "status": "Pilot-ready",
    "line": "Every cost of the project on one traceable line: capital, contingency, escalation, operating, lifecycle and end-of-life.",
    "desc": [
-    "Cost Model builds estimates bottom-up from quantities and unit rates, using a cost database drawn from completed projects. It produces a should-cost for every package, so bids can be tested line by line against what the work ought to cost.",
-    "The same engine gives cost per unit of capacity and levelized cost, and estimates end-of-life cost when an asset is retired. One model replaces the spreadsheets that are usually rebuilt at every stage."
+    "Costline builds the estimate bottom-up from quantities, unit rates and vendor quotes. Every rate traces back to its quote, quantity and escalation index, so the board figure can be followed down to a single line, and every package has a should-cost that bids can be tested against line by line.",
+    "Contingency is drawn from quantified risk, not a percentage. The estimate is classified against the AACE International estimate classes for its design maturity, placed against comparable projects, and re-priced when equipment markets move, such as gas turbine prices. The same engine gives cost per unit of capacity, levelized cost and end-of-life cost."
    ],
    "features": [
     [
@@ -605,6 +626,18 @@
     [
      "Package split check",
      "Each package’s share tested against public references"
+    ],
+    [
+     "Rate trace",
+     "Every rate traced to its quote, quantity and escalation"
+    ],
+    [
+     "Market re-pricing",
+     "The estimate re-priced as equipment markets move, scenario by scenario"
+    ],
+    [
+     "Benchmark position",
+     "Cost per kilowatt against comparable plants"
     ]
    ],
    "stages": {
@@ -616,12 +649,14 @@
     "eol": "Estimates decommissioning cost"
    },
    "customers": [
-    "contractors"
+    "contractors",
+    "owners"
    ],
    "connects": [
     "generative-concepts",
-    "outturn",
-    "investment-case"
+    "investment-case",
+    "risk-analysis",
+    "outturn"
    ],
    "value": "Estimates that hold up to challenge at every stage, anchored to regional benchmarks such as cost per MW, and bids tested before award.",
    "problem": "Estimates are rebuilt in spreadsheets at every stage and cannot be traced or tested.",
@@ -634,7 +669,8 @@
    "how": [
     "Parametric cost-estimating relationships fitted to the cost database",
     "Escalation and currency by published cost indices",
-    "Contingency drawn from the quantified risk distribution, not a percentage"
+    "Contingency drawn from the quantified risk distribution, not a percentage",
+    "Estimate classification by design maturity, against AACE International 18R-97"
    ]
   },
   {
@@ -645,8 +681,8 @@
    "status": "Pilot-ready",
    "line": "The investment case, recalculated the moment cost, dates or prices change, at P50 and at P80.",
    "desc": [
-    "Abacus is the project’s financial model: capital spend, revenues, operating cost, financing and returns. It reads the estimate from Cost Model and the dates from Mr. Scheduler and Digital Twin, so the investment case moves when the project does.",
-    "It tests the case at P50 and P80 cost and dates, sizes debt to coverage, and compares extending, repowering or retiring an asset at the end of its life."
+    "Investment Case is the project’s financial model: capital spend, revenues, operating cost, financing and returns. It reads the estimate from Costline and the dates from Generative Scheduling, so the investment case moves when the project does.",
+    "It tests the case at P50 and P80 cost and dates, sizes debt to coverage, and prices the revenue lost if the project misses its delivery window. It drafts the investment memo from the same numbers, and compares extending, repowering or retiring an asset at the end of its life."
    ],
    "features": [
     [
@@ -664,6 +700,14 @@
     [
      "End-of-life options",
      "Extend, repower or retire, compared on value"
+    ],
+    [
+     "Late-date test",
+     "Revenue lost if the project misses its delivery window, priced at the P80 date"
+    ],
+    [
+     "Investment memo",
+     "Drafted from the same numbers for the board and the lenders, for people to approve"
     ]
    ],
    "stages": {
@@ -681,7 +725,8 @@
    "connects": [
     "cost-line",
     "generative-scheduling",
-    "outturn"
+    "risk-analysis",
+    "cockpit"
    ],
    "value": "Capital is committed on a case that reflects the real project.",
    "problem": "The investment case is a separate model that drifts from the real project.",
@@ -730,8 +775,8 @@
      "Permits, land, utilities and owner deliverables modelled as logic"
     ],
     [
-     "Sequence optimization",
-     "Alternative sequences generated and tested"
+     "Multi-objective optimizer",
+     "A genetic algorithm searches non-linear, resource-constrained sequences; Monte Carlo simulation tests each option as faster, cheaper or safer"
     ],
     [
      "Schedule risk",
@@ -740,6 +785,14 @@
     [
      "Export",
      "Primavera P6 and Microsoft Project"
+    ],
+    [
+     "Planner companion",
+     "Reads each activity as the planner writes it, and flags logic gaps early"
+    ],
+    [
+     "Schedule quality",
+     "Logic and quality checked before optimization"
     ]
    ],
    "stages": {
@@ -749,7 +802,8 @@
     "exe": "Re-baselines when the project changes"
    },
    "customers": [
-    "contractors"
+    "contractors",
+    "owners"
    ],
    "connects": [
     "generative-twin",
@@ -768,7 +822,8 @@
     "Streaming schedule parsing, with every activity classified by phase and discipline",
     "Critical path method on generated precedence logic",
     "Parametric durations and resources from quantities, productivity and crews",
-    "Schedule-network Monte Carlo for P50 and P80 dates"
+    "Schedule-network Monte Carlo for P50 and P80 dates",
+    "Multi-objective genetic algorithm over non-linear, resource-constrained sequences, each option tested by Monte Carlo simulation"
    ]
   },
   {
@@ -885,6 +940,10 @@
     [
      "Risk allocation",
      "Contract strategy tested: risk held by the party able to control it"
+    ],
+    [
+     "Drafted register",
+     "Risks and mitigation options drafted from project documents and comparable histories, for people to approve"
     ]
    ],
    "stages": {
@@ -915,7 +974,8 @@
     "Critical path method on the loaded schedule, with DCMA schedule-health checks first",
     "Schedule-network and risk-register Monte Carlo, run independently and compared",
     "Analytic PERT and AACE estimate-class comparison as a cross-check",
-    "Earned value and momentum forecasts once the project is live"
+    "Earned value and momentum forecasts once the project is live",
+    "Integrated cost and schedule risk analysis to AACE International 57R-09"
    ]
   },
   {
@@ -926,7 +986,7 @@
    "status": "Pilot-ready",
    "line": "How comparable projects really performed, and where yours stands, in 24 to 48 hours.",
    "desc": [
-    "RealityScan assembles the record of comparable projects: what they were estimated to cost, what they cost, how late they were and why. It benchmarks a project’s estimate and schedule against that record and shows where it sits.",
+    "RealityScan assembles the record of comparable projects: what they were estimated to cost, what they cost, how late they were and why. It places a project’s estimate and schedule against that record, and checks scope for what comparable plants included and this one leaves out.",
     "For assets in operation it benchmarks performance against peers and puts a value on the gap. It is the fastest way to find out whether a number is credible."
    ],
    "features": [
@@ -953,6 +1013,10 @@
     [
      "Package split check",
      "Each package’s share of the estimate against public references"
+    ],
+    [
+     "Scope-gap check",
+     "What comparable plants included that this estimate leaves out"
     ]
    ],
    "stages": {
@@ -968,14 +1032,15 @@
    ],
    "connects": [
     "outturn",
-    "cost-line"
+    "cost-line",
+    "stage-gate"
    ],
    "value": "Credibility tested in two days, before effort and money follow a bad number.",
    "problem": "Nobody knows quickly whether a number is credible against what similar projects achieved.",
    "flow": [
     "The project’s estimate and schedule",
     "Places them against comparable completed projects",
-    "A credibility check in 24 to 48 hours"
+    "A credibility check and a scope-gap list in 24 to 48 hours"
    ],
    "step": "Test",
    "how": [
@@ -1027,7 +1092,8 @@
    "connects": [
     "realityscan",
     "cost-line",
-    "risk-analysis"
+    "risk-analysis",
+    "stage-gate"
    ],
    "value": "Capital committed at a number that holds, with contingency where it belongs.",
    "problem": "Projects are approved on the inside view, and the outside view arrives as overruns.",
@@ -1152,7 +1218,7 @@
     ],
     [
      "Project reset",
-     "An independent baseline and new decision rights"
+     "An independent baseline generated at a declared confidence, with decision rights that hold it"
     ]
    ],
    "stages": {
@@ -1167,7 +1233,8 @@
    ],
    "connects": [
     "cockpit",
-    "outturn"
+    "outturn",
+    "lessons-learned"
    ],
    "value": "Disputes settled on evidence, and troubled projects reset on a baseline that holds.",
    "problem": "When projects fail, the causes and the cost are argued rather than established.",
@@ -1178,7 +1245,7 @@
    ],
    "step": "Recover",
    "how": [
-    "Time-impact and windows analysis of delay",
+    "Windows analysis of delay to AACE International 29R-03 and the Society of Construction Law Delay and Disruption Protocol",
     "Earned value and disruption quantification",
     "Business-case tests on the risk arithmetic"
    ]
@@ -1224,6 +1291,10 @@
     [
      "At the right moment",
      "Lessons surfaced at the matching stage and gate of the next project"
+    ],
+    [
+     "Lesson brief",
+     "A brief of the lessons that apply, generated for each stage and gate"
     ]
    ],
    "stages": {
@@ -1244,7 +1315,8 @@
    "connects": [
     "realityscan",
     "outturn",
-    "stage-gate"
+    "stage-gate",
+    "risk-analysis"
    ],
    "value": "The next project starts with every lesson the last ones paid for.",
    "step": "Test",
@@ -1295,6 +1367,10 @@
     [
      "Independent challenge",
      "An expert panel at the gate, every finding closed with a disposition"
+    ],
+    [
+     "Analysis gate",
+     "Analysis that lacks its inputs is held until the evidence exists"
     ]
    ],
    "stages": {
@@ -1311,7 +1387,9 @@
    ],
    "connects": [
     "outturn",
-    "alignment-room"
+    "alignment-room",
+    "lessons-learned",
+    "cockpit"
    ],
    "value": "Projects pass gates on evidence, and no gate is passed with an unowned gap.",
    "step": "Decide",
@@ -1352,7 +1430,7 @@
      "Where parties see the same issue differently"
     ],
     [
-     "Single pane of glass",
+     "One alignment view",
      "Readiness and alignment across every party in one view"
     ],
     [
@@ -1435,7 +1513,8 @@
    "connects": [
     "generative-twin",
     "investment-case",
-    "realityscan"
+    "realityscan",
+    "lessons-learned"
    ],
    "value": "More output from assets already built, and sustaining capital where it earns most.",
    "problem": "Performance gaps become normal once an asset is running.",
