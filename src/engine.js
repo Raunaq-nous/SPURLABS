@@ -9,6 +9,18 @@
   const PM = { base: new T.PointsMaterial({ color: 0xd3dadc, size: 1.2, sizeAttenuation: false, transparent: true, opacity: 0.3, blending: T.AdditiveBlending, depthWrite: false, clippingPlanes: [clip] }), dim: new T.PointsMaterial({ color: 0x7d888a, size: 1.0, sizeAttenuation: false, transparent: true, opacity: 0.16, blending: T.AdditiveBlending, depthWrite: false, clippingPlanes: [clip] }), hl: new T.PointsMaterial({ color: 0xd8c29e, size: 1.5, sizeAttenuation: false, transparent: true, opacity: 0.9, clippingPlanes: [clip] }), cyan: new T.PointsMaterial({ color: 0xa8dadc, size: 1.4, sizeAttenuation: false, transparent: true, opacity: 0.85, clippingPlanes: [clip] }) };
   const FACE = new T.MeshBasicMaterial({ color: 0x0b0d0e, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, clippingPlanes: [clip] });
   const FACED = new T.MeshBasicMaterial({ color: 0x070809, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1, clippingPlanes: [clip] });
+  /* theme: dark is the original look; light inverts each material's lightness (hue kept), turns additive glow into normal ink, and makes occluding faces the paper colour */
+  const THEME = { light: false }, PAPER = 0xF4F2EE, PAPERD = 0xEEEBE5, FOG_DARK = 0x000000;
+  FACE.userData.face = PAPER; FACED.userData.face = PAPERD;
+  const themeMat = (m) => {
+    if (!m || !m.color) return; const u = m.userData;
+    if (!u.th) u.th = { c: m.color.getHex(), b: m.blending, o: u.o !== undefined ? u.o : m.opacity };
+    if (THEME.light) { if (u.face) m.color.setHex(u.face); else { const h = {}; new T.Color(u.th.c).getHSL(h); m.color.setHSL(h.h, h.s, Math.max(0.08, 1 - h.l)); } m.blending = T.NormalBlending; m.opacity = Math.min(1, u.th.o * (u.th.b === T.AdditiveBlending ? 1.6 : 1)); }
+    else { m.color.setHex(u.th.c); m.blending = u.th.b; m.opacity = u.th.o; }
+    if (u.o !== undefined) u.o = m.opacity; m.needsUpdate = true;
+  };
+  const themeObj = (root) => { if (root) root.traverse((o) => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach(themeMat); }); };
+  S.themeMat = themeMat; [LM.base, LM.dim, LM.hl, LM.cyan, PM.base, PM.dim, PM.hl, PM.cyan, FACE, FACED].forEach(themeMat);
   function sample(g, n) { const P = g.attributes.position.array, tri = P.length / 9, A = new Float64Array(tri); let tot = 0; const a = new T.Vector3(), b = new T.Vector3(), c = new T.Vector3(); for (let t = 0; t < tri; t++) { a.fromArray(P, t * 9); b.fromArray(P, t * 9 + 3); c.fromArray(P, t * 9 + 6); tot += b.sub(a).cross(c.sub(a)).length() / 2; A[t] = tot; } const out = new Float32Array(n * 3); for (let k = 0; k < n; k++) { const r = Math.random() * tot; let lo = 0, hi = tri - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (A[m] < r) lo = m + 1; else hi = m; } let u = Math.random(), v = Math.random(); if (u + v > 1) { u = 1 - u; v = 1 - v; } const o = lo * 9; for (let d = 0; d < 3; d++) out[k * 3 + d] = P[o + d] + (P[o + 3 + d] - P[o + d]) * u + (P[o + 6 + d] - P[o + d]) * v; } const q = new T.BufferGeometry(); q.setAttribute('position', new T.BufferAttribute(out, 3)); return { geo: q, area: tot }; }
   function lineArt(root) {
     root.updateMatrixWorld(true); const ws = new T.Vector3();
@@ -38,9 +50,11 @@
     refreshGlyphs() {}
     resize() { this.r.setSize(window.innerWidth, window.innerHeight, false); this.cv.style.width = '100%'; this.cv.style.height = '100%'; }
     set(v) { this.want = v; }
+    setTheme(light) { THEME.light = !!light; this.scene.fog.color.setHex(light ? PAPER : FOG_DARK); themeObj(this.scene); this.cache.forEach((c) => themeObj(c.comp)); this.hlLast = null; }
     apply(v) {
       const key = v ? JSON.stringify({ k: v.kind, m: v.model, s: v.stage, t: v.tool }) : '';
       if (key !== this.key) { this.key = key; while (this.root.children.length) this.root.remove(this.root.children[0]); const hit = key && this.cache.get(key); if (hit) { this.comp = hit.comp; this.root.add(this.comp); this.box = hit.box; this.ylo = hit.ylo; this.yhi = hit.yhi; this.parts = hit.parts; this.parts.forEach((q) => q.o.position.copy(q.base)); this.built = this.t; this.hlLast = null; } else this.comp = v ? S.compose(v) : null; if (this.comp && !hit) { this.root.add(this.comp); this.comp.updateMatrixWorld(true); const b = new T.Box3(); this.comp.traverse((o) => { if (o.isMesh && o.visible) b.expandByObject(o); }); if (b.isEmpty() || b.getSize(new T.Vector3()).length() < 0.5) b.setFromObject(this.comp); this.box = b; this.ylo = b.min.y; this.yhi = b.max.y; const cc = b.getCenter(new T.Vector3()); this.parts = []; this.comp.traverse((o) => { if (o.isMesh && o.userData.name && !o.userData.dim && o.userData.region >= 0) { const cw = new T.Box3().setFromObject(o).getCenter(new T.Vector3()), ps = o.parent.getWorldScale(new T.Vector3()).x || 1, d = cw.sub(cc); d.y = Math.max(0, d.y) * 0.6 + 0.14; this.parts.push({ o, base: o.position.clone(), d: d.multiplyScalar(0.5 / ps) }); } }); } this.built = this.t; }
+      if (this.comp && !this.comp.userData.themed) { this.comp.userData.themed = 1; themeObj(this.comp); }
       if (this.comp && key && !this.cache.has(key)) { this.cache.set(key, { comp: this.comp, box: this.box, ylo: this.ylo, yhi: this.yhi, parts: this.parts }); if (this.cache.size > 12) this.cache.delete(this.cache.keys().next().value); }
     }
     frame(dt) {
