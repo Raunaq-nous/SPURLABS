@@ -3,12 +3,20 @@
   const S = window.Spur, D = S.DATA, $ = (s, el) => (el || document).querySelector(s), $$ = (s, el) => [...(el || document).querySelectorAll(s)];
   const eng = new S.Engine($('#scene')); S.engine = eng;
   /* light and dark: dark is the default; the choice is remembered on this device */
-  const themeBtn = $('#theme-t'), root = document.documentElement;
+  const themeBtns = $$('.theme-t'), root = document.documentElement;
   const applyTheme = (light) => { if (light) root.setAttribute('data-theme', 'light'); else root.removeAttribute('data-theme'); eng.setTheme(light);
-    if (themeBtn) { themeBtn.setAttribute('aria-pressed', String(light)); themeBtn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode'); }
+    themeBtns.forEach((b) => { b.setAttribute('aria-pressed', String(light)); b.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode'); });
     const mc = document.querySelector('meta[name="theme-color"]'); if (mc) mc.setAttribute('content', light ? '#F4F2EE' : '#0A0A0B'); };
   applyTheme(root.getAttribute('data-theme') === 'light');
-  if (themeBtn) themeBtn.addEventListener('click', (e) => { e.stopPropagation(); const light = root.getAttribute('data-theme') !== 'light'; applyTheme(light); try { localStorage.setItem('spur-theme', light ? 'light' : 'dark'); } catch (_) {} });
+  themeBtns.forEach((tb0) => tb0.addEventListener('click', (e) => { e.stopPropagation(); const light = root.getAttribute('data-theme') !== 'light'; applyTheme(light); try { localStorage.setItem('spur-theme', light ? 'light' : 'dark'); } catch (_) {} }));
+  /* small screens: the menu opens as a full-screen panel */
+  const nav = $('.nav'), menuBtn = $('.menu-t');
+  const setMenu = (open) => { if (!nav || !menuBtn) return; nav.classList.toggle('open', open); root.classList.toggle('menu-open', open); menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
+  if (menuBtn) menuBtn.addEventListener('click', (e) => { e.stopPropagation(); setMenu(!nav.classList.contains('open')); });
+  $('#main-menu').addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  window.addEventListener('hashchange', () => setMenu(false));
+  matchMedia('(min-width: 901px)').addEventListener('change', (q) => { if (q.matches) setMenu(false); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => eng.refreshGlyphs());
   const TOOL = Object.fromEntries(D.tools.map((t) => [t.id, t])), STG = D.stages, SI = Object.fromEntries(STG.map((s, i) => [s.id, i]));
   /* auto-advance with progress bars; scrolling speeds it up */

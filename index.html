@@ -305,6 +305,26 @@ html{background:var(--bg)}
 .theme-t svg{width:16px;height:16px;display:block}
 .theme-t .sun{display:none}:root[data-theme="light"] .theme-t .sun{display:block}:root[data-theme="light"] .theme-t .moon{display:none}
 @media (max-width:1000px){.theme-t{order:-1}}
+
+/* mobile nav: wordmark, theme toggle and a menu button; the menu opens as a full-screen panel */
+.bar-m{display:none;align-items:center;gap:12px}
+.menu-t{all:unset;box-sizing:border-box;cursor:pointer;width:34px;height:34px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line2);border-radius:50%}
+.menu-t span{display:block;width:14px;height:1.3px;background:var(--ink);transition:transform .25s}
+.nav.open .menu-t span:first-child{transform:translateY(3.65px) rotate(45deg)}.nav.open .menu-t span:last-child{transform:translateY(-3.65px) rotate(-45deg)}
+@media (max-width:900px){
+ .bar-m{display:flex}
+ .menu{display:none}
+ .nav.open{background:var(--bg)}
+ .nav.open .menu{display:flex;flex-direction:column;align-items:stretch;gap:0;position:fixed;left:0;right:0;bottom:0;top:calc(env(safe-area-inset-top,0px) + 70px);padding:8px 20px calc(32px + env(safe-area-inset-bottom,0px));background:var(--bg);overflow-y:auto;overscroll-behavior:contain;border-top:1px solid var(--line)}
+ .nav.open .menu > a:not(.cta-nav),.nav.open .menu .tm > button{display:flex;justify-content:space-between;align-items:center;width:100%;box-sizing:border-box;font-size:20px;letter-spacing:-.01em;color:var(--ink);padding:16px 0;border-bottom:1px solid var(--line);text-align:left}
+ .nav.open .menu .tm button::after{margin-left:12px;transition:transform .2s}.nav.open .menu .tm button[aria-expanded="true"]::after{transform:rotate(225deg) translate(-2px,-2px)}
+ .nav.open .tm-panel{position:static;width:auto;grid-template-columns:1fr;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;padding:4px 0 14px;gap:0}
+ .nav.open .tm-panel a{border-top:0;padding:9px 0}
+ .nav.open .menu .theme-t{display:none}
+ .nav.open .menu .cta-nav{order:10;margin-top:24px;text-align:center;padding:14px;font-size:16px;background:var(--inv);color:var(--inv-ink);border-color:var(--inv)}
+ html.menu-open,html.menu-open body{overflow:hidden}
+}
+.theme-t{background:none;cursor:pointer;font:inherit}
 </style>
 </head>
 <body>
@@ -312,13 +332,14 @@ html{background:var(--bg)}
 <div id="cap" aria-hidden="true"></div>
 <header class="nav">
 <a class="brand" href="#" aria-label="SPURLABS home"><svg class="wm" viewBox="0 0 150 22" role="img" aria-hidden="true"><text x="0" y="17.5"><tspan class="w1">SPUR</tspan><tspan class="w2">LABS</tspan></text></svg></a>
-<nav class="menu" aria-label="Main">
+<nav class="menu" id="main-menu" aria-label="Main">
 <a href="#" data-go="platform">Platform</a><div class="tm"><button type="button" aria-expanded="false">Lifecycle</button><div class="tm-panel one" id="m-life" hidden></div></div><div class="tm"><button type="button" aria-expanded="false">Industries</button><div class="tm-panel two" id="m-ind" hidden></div></div><div class="tm"><button type="button" aria-expanded="false">Customers</button><div class="tm-panel one" id="m-cust" hidden></div></div>
 <div class="tm"><button type="button" id="tools-btn" aria-expanded="false" aria-controls="tools-menu">Tools</button><div class="tm-panel" id="tools-menu" hidden></div></div>
 <a href="#spurs">Spurs</a>
 <button type="button" class="theme-t" id="theme-t" aria-label="Switch to light mode" aria-pressed="false"><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.6A5.6 5.6 0 0 1 6.4 2.5a5.6 5.6 0 1 0 7.1 7.1Z"/></svg><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.2v1.6M8 13.2v1.6M1.2 8h1.6M13.2 8h1.6M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M3.2 12.8l1.1-1.1M11.7 4.3l1.1-1.1"/></svg></button>
 <a class="cta-nav" href="mailto:spurlabs@gmail.com?subject=SPURLABS%20briefing">Request a briefing</a>
 </nav>
+<div class="bar-m"><button type="button" class="theme-t theme-m" aria-label="Switch to light mode" aria-pressed="false"><svg class="moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13.5 9.6A5.6 5.6 0 0 1 6.4 2.5a5.6 5.6 0 1 0 7.1 7.1Z"/></svg><svg class="sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.2v1.6M8 13.2v1.6M1.2 8h1.6M13.2 8h1.6M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M3.2 12.8l1.1-1.1M11.7 4.3l1.1-1.1"/></svg></button><button type="button" class="menu-t" aria-expanded="false" aria-controls="main-menu" aria-label="Open menu"><span></span><span></span></button></div>
 </header>
 <main id="home">
 <section class="sec hero" data-scene="hero">
@@ -772,12 +793,20 @@ html{background:var(--bg)}
   const S = window.Spur, D = S.DATA, $ = (s, el) => (el || document).querySelector(s), $$ = (s, el) => [...(el || document).querySelectorAll(s)];
   const eng = new S.Engine($('#scene')); S.engine = eng;
   /* light and dark: dark is the default; the choice is remembered on this device */
-  const themeBtn = $('#theme-t'), root = document.documentElement;
+  const themeBtns = $$('.theme-t'), root = document.documentElement;
   const applyTheme = (light) => { if (light) root.setAttribute('data-theme', 'light'); else root.removeAttribute('data-theme'); eng.setTheme(light);
-    if (themeBtn) { themeBtn.setAttribute('aria-pressed', String(light)); themeBtn.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode'); }
+    themeBtns.forEach((b) => { b.setAttribute('aria-pressed', String(light)); b.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode'); });
     const mc = document.querySelector('meta[name="theme-color"]'); if (mc) mc.setAttribute('content', light ? '#F4F2EE' : '#0A0A0B'); };
   applyTheme(root.getAttribute('data-theme') === 'light');
-  if (themeBtn) themeBtn.addEventListener('click', (e) => { e.stopPropagation(); const light = root.getAttribute('data-theme') !== 'light'; applyTheme(light); try { localStorage.setItem('spur-theme', light ? 'light' : 'dark'); } catch (_) {} });
+  themeBtns.forEach((tb0) => tb0.addEventListener('click', (e) => { e.stopPropagation(); const light = root.getAttribute('data-theme') !== 'light'; applyTheme(light); try { localStorage.setItem('spur-theme', light ? 'light' : 'dark'); } catch (_) {} }));
+  /* small screens: the menu opens as a full-screen panel */
+  const nav = $('.nav'), menuBtn = $('.menu-t');
+  const setMenu = (open) => { if (!nav || !menuBtn) return; nav.classList.toggle('open', open); root.classList.toggle('menu-open', open); menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
+  if (menuBtn) menuBtn.addEventListener('click', (e) => { e.stopPropagation(); setMenu(!nav.classList.contains('open')); });
+  $('#main-menu').addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  window.addEventListener('hashchange', () => setMenu(false));
+  matchMedia('(min-width: 901px)').addEventListener('change', (q) => { if (q.matches) setMenu(false); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => eng.refreshGlyphs());
   const TOOL = Object.fromEntries(D.tools.map((t) => [t.id, t])), STG = D.stages, SI = Object.fromEntries(STG.map((s, i) => [s.id, i]));
   /* auto-advance with progress bars; scrolling speeds it up */

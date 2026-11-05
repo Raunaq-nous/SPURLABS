@@ -294,3 +294,23 @@ html{background:var(--bg)}
 .theme-t svg{width:16px;height:16px;display:block}
 .theme-t .sun{display:none}:root[data-theme="light"] .theme-t .sun{display:block}:root[data-theme="light"] .theme-t .moon{display:none}
 @media (max-width:1000px){.theme-t{order:-1}}
+
+/* mobile nav: wordmark, theme toggle and a menu button; the menu opens as a full-screen panel */
+.bar-m{display:none;align-items:center;gap:12px}
+.menu-t{all:unset;box-sizing:border-box;cursor:pointer;width:34px;height:34px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line2);border-radius:50%}
+.menu-t span{display:block;width:14px;height:1.3px;background:var(--ink);transition:transform .25s}
+.nav.open .menu-t span:first-child{transform:translateY(3.65px) rotate(45deg)}.nav.open .menu-t span:last-child{transform:translateY(-3.65px) rotate(-45deg)}
+@media (max-width:900px){
+ .bar-m{display:flex}
+ .menu{display:none}
+ .nav.open{background:var(--bg)}
+ .nav.open .menu{display:flex;flex-direction:column;align-items:stretch;gap:0;position:fixed;left:0;right:0;bottom:0;top:calc(env(safe-area-inset-top,0px) + 70px);padding:8px 20px calc(32px + env(safe-area-inset-bottom,0px));background:var(--bg);overflow-y:auto;overscroll-behavior:contain;border-top:1px solid var(--line)}
+ .nav.open .menu > a:not(.cta-nav),.nav.open .menu .tm > button{display:flex;justify-content:space-between;align-items:center;width:100%;box-sizing:border-box;font-size:20px;letter-spacing:-.01em;color:var(--ink);padding:16px 0;border-bottom:1px solid var(--line);text-align:left}
+ .nav.open .menu .tm button::after{margin-left:12px;transition:transform .2s}.nav.open .menu .tm button[aria-expanded="true"]::after{transform:rotate(225deg) translate(-2px,-2px)}
+ .nav.open .tm-panel{position:static;width:auto;grid-template-columns:1fr;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;padding:4px 0 14px;gap:0}
+ .nav.open .tm-panel a{border-top:0;padding:9px 0}
+ .nav.open .menu .theme-t{display:none}
+ .nav.open .menu .cta-nav{order:10;margin-top:24px;text-align:center;padding:14px;font-size:16px;background:var(--inv);color:var(--inv-ink);border-color:var(--inv)}
+ html.menu-open,html.menu-open body{overflow:hidden}
+}
+.theme-t{background:none;cursor:pointer;font:inherit}
