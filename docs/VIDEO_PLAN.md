@@ -9,7 +9,7 @@ One case, Mesa Ridge Energy Center, carried through the lifecycle with the real 
 | 0:12 | Find | Opportunity Map | Sites and forming projects ranked, with delivery capacity |
 | 0:25 | Shape | Generative Concepts, Cost Line, Investment Case | Concepts generated and costed; the investment case on one basis |
 | 0:50 | Plan | Generative Scheduling, Generative Digital Twin | Parametric durations and crews, linked to the 3D model; P50 and P80 dates |
-| 1:20 | Test | RealityScan, Outturn Forecast, Risk Analysis, Lessons Learned | The estimate against comparable plants; contingency at P50 and P80 |
+| 1:20 | Test | Precedent, Outturn Forecast, Risk Analysis, Hindsight | The estimate against comparable plants; contingency at P50 and P80 |
 | 1:50 | Decide and align | Stage Gate Assistant, Alignment Room | The FID pack, and where the parties disagree |
 | 2:15 | Deliver | Cockpit, Generative Digital Twin | Progress measured from site; drift flagged; recovery priced |
 | 2:35 | Operate | Asset Potential | The value gap to full potential |

@@ -980,13 +980,13 @@
   },
   {
    "id": "realityscan",
-   "name": "RealityScan",
+   "name": "Precedent",
    "layer": "portfolio",
    "vis": 2,
    "status": "Pilot-ready",
    "line": "How comparable projects really performed, and where yours stands, in 24 to 48 hours.",
    "desc": [
-    "RealityScan assembles the record of comparable projects: what they were estimated to cost, what they cost, how late they were and why. It places a project’s estimate and schedule against that record, and checks scope for what comparable plants included and this one leaves out.",
+    "Precedent assembles the record of comparable projects: what they were estimated to cost, what they cost, how late they were and why. It places a project’s estimate and schedule against that record, and checks scope for what comparable plants included and this one leaves out.",
     "For assets in operation it benchmarks performance against peers and puts a value on the gap. It is the fastest way to find out whether a number is credible."
    ],
    "features": [
@@ -1252,7 +1252,7 @@
   },
   {
    "id": "lessons-learned",
-   "name": "Lessons Learned",
+   "name": "Hindsight",
    "layer": "portfolio",
    "vis": 7,
    "status": "Pilot-ready",
@@ -1264,7 +1264,7 @@
     "Lessons pushed to the next project at the matching stage and gate, and closed only when practice changes"
    ],
    "desc": [
-    "Lessons Learned collects lessons from two sources: the owner’s own projects (close-out reports, change records, claims and audits) and the industry’s (public audit reports, inquiries, regulator reviews and published case studies). Each lesson is cited to the document and page it came from, and every project document can be searched and questioned the same way.",
+    "Hindsight collects lessons from two sources: the owner’s own projects (close-out reports, change records, claims and audits) and the industry’s (public audit reports, inquiries, regulator reviews and published case studies). Each lesson is cited to the document and page it came from, and every project document can be searched and questioned the same way.",
     "It tests which practices actually predicted outcomes in the owner’s record, and surfaces the relevant lessons when the next project reaches the matching stage or gate. A lesson closes only when a named artefact, such as an estimate template, a gate criterion or a contract clause, has changed."
    ],
    "features": [
