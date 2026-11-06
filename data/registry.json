@@ -115,7 +115,7 @@
     "generative-concepts": "Chooses the concept with the best lifetime economics",
     "generative-twin": "Shows what is built, not what is reported",
     "outturn": "Sets the number and contingency at FID from comparable outcomes",
-    "lessons-learned": "Starts every project with the lessons the last ones paid for",
+    "hindsight": "Starts every project with the lessons the last ones paid for",
     "stage-gate": "Makes each gate decision on a complete pack",
     "alignment-room": "Keeps contractors, lenders and regulators aligned between gates",
     "cockpit": "Measures progress from the site itself, and flags drift before the report",
@@ -123,7 +123,7 @@
     "cost-line": "Traces the board figure to a single quote, and tests every bid against should-cost",
     "generative-scheduling": "Computes the schedule from scope and crews, with utilities, permits and equipment makers modelled as dependencies",
     "risk-analysis": "Sets contingency on quantified exposure at P50 and P80",
-    "realityscan": "Tests the estimate against comparable plants, and finds the scope it leaves out, in 48 hours"
+    "precedent": "Tests the estimate against comparable plants, and finds the scope it leaves out, in 48 hours"
    }
   },
   {
@@ -152,7 +152,7 @@
     "generative-scheduling": "Builds the baseline from comparable durations",
     "generative-twin": "Shows the build sequence in 4D before mobilization",
     "risk-analysis": "Prices risk into the bid before it is signed",
-    "lessons-learned": "Brings lessons from past bids and claims into the next bid",
+    "hindsight": "Brings lessons from past bids and claims into the next bid",
     "alignment-room": "Surfaces owner and supplier issues before they become disputes",
     "forensic": "Quantifies delay and disruption for claims",
     "cockpit": "Proves progress and delay from site imagery, element by element"
@@ -165,7 +165,7 @@
    "need": "Test the case before funding it, and see drift before it costs money.",
    "tools": [
     "opportunity-map",
-    "realityscan",
+    "precedent",
     "outturn",
     "investment-case",
     "cockpit",
@@ -181,7 +181,7 @@
    "how": {
     "opportunity-map": "Deal flow: forming projects that will need equity or debt, ranked by credibility",
     "investment-case": "Re-runs returns at P50 and P80 cost and dates",
-    "realityscan": "Tests whether the sponsor’s number is credible in 48 hours",
+    "precedent": "Tests whether the sponsor’s number is credible in 48 hours",
     "outturn": "Gives an independent P50 and P80 before funding",
     "alignment-room": "Hears from every party, not just the sponsor",
     "cockpit": "Monitors every funded project against its case",
@@ -196,7 +196,7 @@
    "tools": [
     "opportunity-map",
     "risk-analysis",
-    "realityscan",
+    "precedent",
     "generative-twin",
     "forensic"
    ],
@@ -208,7 +208,7 @@
    "how": {
     "opportunity-map": "Exposure forming in each market before it reaches underwriting",
     "generative-twin": "Verifies progress and start-up readiness",
-    "realityscan": "Shows how comparable projects actually performed",
+    "precedent": "Shows how comparable projects actually performed",
     "risk-analysis": "Quantifies the exposure being insured",
     "forensic": "Reconstructs events and quantifies the claim",
     "cockpit": "Verifies progress and start-up readiness from site imagery"
@@ -222,7 +222,7 @@
    "tools": [
     "opportunity-map",
     "outturn",
-    "realityscan",
+    "precedent",
     "cockpit",
     "stage-gate",
     "alignment-room"
@@ -235,9 +235,9 @@
    "value": "Approve programmes on the outside view, hold delivery to account, and carry lessons forward.",
    "how": {
     "opportunity-map": "The private pipeline set against public infrastructure plans and grid capacity",
-    "realityscan": "Benchmarks every submission against completed projects",
+    "precedent": "Benchmarks every submission against completed projects",
     "outturn": "Sets the approved budget from comparable outcomes",
-    "lessons-learned": "Carries lessons from one programme into the next",
+    "hindsight": "Carries lessons from one programme into the next",
     "stage-gate": "Runs gate reviews on complete evidence",
     "alignment-room": "Hears from every agency and contractor in one view",
     "cockpit": "Shows every programme against its approved case"
@@ -491,7 +491,7 @@
    "connects": [
     "generative-concepts",
     "generative-scheduling",
-    "realityscan"
+    "precedent"
    ],
    "value": "Effort goes to projects that can be won and delivered.",
    "problem": "Pursuit teams find projects late, from tenders, after the best positions are taken.",
@@ -979,7 +979,7 @@
    ]
   },
   {
-   "id": "realityscan",
+   "id": "precedent",
    "name": "Precedent",
    "layer": "portfolio",
    "vis": 2,
@@ -1090,7 +1090,7 @@
     "government"
    ],
    "connects": [
-    "realityscan",
+    "precedent",
     "cost-line",
     "risk-analysis",
     "stage-gate"
@@ -1234,7 +1234,7 @@
    "connects": [
     "cockpit",
     "outturn",
-    "lessons-learned"
+    "hindsight"
    ],
    "value": "Disputes settled on evidence, and troubled projects reset on a baseline that holds.",
    "problem": "When projects fail, the causes and the cost are argued rather than established.",
@@ -1251,7 +1251,7 @@
    ]
   },
   {
-   "id": "lessons-learned",
+   "id": "hindsight",
    "name": "Hindsight",
    "layer": "portfolio",
    "vis": 7,
@@ -1313,7 +1313,7 @@
     "government"
    ],
    "connects": [
-    "realityscan",
+    "precedent",
     "outturn",
     "stage-gate",
     "risk-analysis"
@@ -1388,7 +1388,7 @@
    "connects": [
     "outturn",
     "alignment-room",
-    "lessons-learned",
+    "hindsight",
     "cockpit"
    ],
    "value": "Projects pass gates on evidence, and no gate is passed with an unowned gap.",
@@ -1513,8 +1513,8 @@
    "connects": [
     "generative-twin",
     "investment-case",
-    "realityscan",
-    "lessons-learned"
+    "precedent",
+    "hindsight"
    ],
    "value": "More output from assets already built, and sustaining capital where it earns most.",
    "problem": "Performance gaps become normal once an asset is running.",
@@ -1708,7 +1708,7 @@
   {
    "role": "Enterprise schedule quality lead",
    "said": "Remapping the data between systems is the hardest part of any change.",
-   "answer": "lessons-learned"
+   "answer": "hindsight"
   }
  ],
  "sources": {
